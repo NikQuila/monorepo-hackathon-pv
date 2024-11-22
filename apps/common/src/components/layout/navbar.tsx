@@ -1,8 +1,6 @@
-"use client";
-
 import { Menu, X } from 'lucide-react';
-import { cn } from '@common/lib/utils';
-import { Button } from '@common/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 import {
   Sheet,
   SheetClose,
@@ -10,20 +8,19 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from '@common/components/ui/sheet';
-import { usePathname } from 'next/navigation';
-import Image from 'next/image';
+} from '@/components/ui/sheet';
+import { useEffect, useState } from 'react';
 
-// const navItems = [
-//   { label: 'Planes', href: '/planes' },
-//   { label: 'The studio', href: '/studio' },
-//   { label: 'The app', href: '#' },
-//   { label: "Let's talk naked", href: '#' },
-// ];
+const navItems = [
+  { label: 'Planes', href: '/planes' },
+  { label: 'The studio', href: '/studio' },
+  { label: 'The app', href: '#' },
+  { label: "Let's talk naked", href: '#' },
+];
 
-// const navActions = [
-//   { label: 'Mi cuenta', href: '#' },
-// ];
+const navActions = [
+  { label: 'Mi cuenta', href: '#' },
+];
 
 const NavLink = ({ href, children, isActive }: { href: string; children: React.ReactNode; isActive?: boolean }) => (
   <a
@@ -38,39 +35,37 @@ const NavLink = ({ href, children, isActive }: { href: string; children: React.R
   </a>
 );
 
+
 const DesktopNav = ({ pathname }: { pathname: string }) => (
   <nav className="hidden lg:flex justify-between items-center gap-4">
     <a href="/">
-      <Image
-        className=""
+      <img
         src="/logo.svg"
         alt="OOH Logo"
         width={180}
         height={38}
-        priority
       />
     </a>
 
-    {/* <div className="w-full flex items-center gap-6">
+    <div className="w-full flex items-center gap-6">
       {navItems.map((item) => (
-        <Nava key={item.href} href={item.href} isActive={pathname === item.href}>
+        <NavLink key={item.href} href={item.href} isActive={pathname === item.href}>
           {item.label}
-        </Nava>
+        </NavLink>
       ))}
-    </div> */}
+    </div>
 
-    <Button variant="primary" asChild>
-      <a href="#">
-        Book a demo
-      </a>
+    <Button asChild>
+      <a href="#">Book a demo</a>
     </Button>
   </nav>
 );
 
+
 const MobileNav = ({ pathname }: { pathname: string }) => (
   <div className="block lg:hidden">
     <div className="flex items-center justify-between gap-4">
-      {/* <Sheet>
+      <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon">
             <Menu className="text-white" size={24} />
@@ -85,13 +80,11 @@ const MobileNav = ({ pathname }: { pathname: string }) => (
                 </Button>
               </SheetClose>
               <a href="/">
-                <Image
-                  className=""
+                <img
                   src="/logo.svg"
                   alt="OOH Logo"
                   width={180}
                   height={38}
-                  priority
                 />
               </a>
             </SheetTitle>
@@ -99,37 +92,42 @@ const MobileNav = ({ pathname }: { pathname: string }) => (
           <div className="my-4 flex *:text-xl flex-col gap-6 *:text-gray-700">
             {navItems.map((item) => (
               <SheetClose key={item.href} asChild>
-                <Nava href={item.href}>
+                <NavLink href={item.href} isActive={pathname === item.href}>
                   {item.label}
-                </Nava>
+                </NavLink>
               </SheetClose>
             ))}
           </div>
         </SheetContent>
-      </Sheet> */}
+      </Sheet>
 
       <a href="/">
-        <Image
-          className=""
+        <img
           src="/logo.svg"
           alt="OOH Logo"
           width={180}
           height={38}
-          priority
         />
       </a>
 
-      <Button variant="primary" asChild>
-        <a href="#">
-          Book a demo
-        </a>
+      <Button asChild>
+        <a href="#">Book a demo</a>
       </Button>
     </div>
   </div>
 );
 
+
 const Navbar = () => {
-  const pathname = usePathname();
+  const [pathname, setPathname] = useState(window.location.pathname);
+
+  useEffect(() => {
+    const handleLocationChange = () => setPathname(window.location.pathname);
+    window.addEventListener('popstate', handleLocationChange);
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
 
   return (
     <div className="z-50 absolute w-screen [&_nav]:max-w-screen-xl [&_nav]:mx-auto top-0 px-4 h-20 content-center">
