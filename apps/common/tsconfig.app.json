@@ -5,6 +5,9 @@
     "paths": {
       "@/*": [
         "../admin/src/*"
+      ],
+      "@common/*": [
+        "../common/src/*"
       ]
     },
     "composite": true,
@@ -30,8 +33,9 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
+    "include": [
     "src/**/*",
-    "../common/src/**/*"
-  ]
+    "../common/src/**/*",
+    "../landing/src/**/*",
+    "../admin/src/**/*", "src/components", "src/components", "../common/hooks", "../common/src/lib"  ]
 }
