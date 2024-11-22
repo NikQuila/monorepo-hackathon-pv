@@ -11,6 +11,7 @@ import {
 import { AppSidebar } from '@/components/app-sidebar';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@common/components/ui/breadcrumb';
 import AuthPage from './pages/auth';
+import { Button } from '@common/components/ui/button';
 
 const App = () => {
   const { session, loading } = useAuthState();
@@ -42,7 +43,9 @@ const App = () => {
             </div>
           </header>
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-3">
+            <div className="flex flex-col gap-12 items-start">
+              dasasdsadasasasd
+              <Button>Click me</Button>
               <div className="aspect-video rounded-xl bg-muted/50" />
               <div className="aspect-video rounded-xl bg-muted/50" />
               <div className="aspect-video rounded-xl bg-muted/50" />

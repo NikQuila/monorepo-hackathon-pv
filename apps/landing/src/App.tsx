@@ -1,10 +1,13 @@
-import { Button } from "@common/components/ui/button";
+import Hero from "./home/hero";
 
 const App = () => {
   return (
     <>
-      asddasdasd
-      <Button>Click me</Button>
+      <Hero />
+      {/* <Features />
+      <Local />
+      <MoreFeatures />
+      <FAQs /> */}
     </>
   );
 };
