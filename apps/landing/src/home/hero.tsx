@@ -11,8 +11,8 @@ export default function Hero() {
           <span className="text-sm md:text-base text-slate-200">
             Simple. Fast. Hyper-Targeted ads
           </span>
-          <h1 className="-mt-6 text-balance font-semibold text-4xl md:text-6xl">
-            Connect with your guests like never before
+          <h1 className="-mt-6 bg-gradient-to-br from-white from-30% to-white/40 bg-clip-text py-6 text-5xl font-medium leading-none tracking-tight text-transparent text-balance sm:text-6xl md:text-7xl lg:text-8xl">
+            La nueva forma de enseñar a tus alumnos.
           </h1>
           <p className="text-slate-200 text-sm md:text-lg max-w-2xl mx-auto">
             Engage high-potential travelers directly through in-room tablets. Perfect for brands looking to connect with a premium, international, and highly receptive audience, whether on vacation or business.
