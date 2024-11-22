@@ -1,23 +1,16 @@
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-import RoutesConfig from './routes';
-import AuthPage from './pages/auth';
+// import RoutesConfig from './routes';
 import useAuthState from './hooks/useAuthState';
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@common/components/ui/separator"
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@common/components/ui/sidebar"
 import { AppSidebar } from '@/components/app-sidebar';
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@common/components/ui/breadcrumb';
+import AuthPage from './pages/auth';
 
 const App = () => {
   const { session, loading } = useAuthState();

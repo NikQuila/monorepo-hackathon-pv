@@ -22,7 +22,7 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@common/components/ui/sidebar"
 
 // This is sample data.
 const data = {
