@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
     "rootDir": "../",
+    "baseUrl": ".",
     "paths": {
-      "common/src/*": ["../common/src/*"]
+      "@/*": [
+        "../admin/src/*"
+      ]
     },
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
@@ -27,5 +30,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src/**/*", "../common/src/**/*"]
+  "include": ["src/**/*", "../admin/src/**/*"]
 }
