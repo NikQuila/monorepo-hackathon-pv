@@ -295,39 +295,41 @@ export default function Chat() {
                 </>
               ) : (
                 <>
-                  <Button
-                    onClick={handleSubmitAudio}
-                    variant='primary'
-                    className='w-full flex gap-1.5'
-                    disabled={loading || !recordedAudio}
-                  >
-                    {loading ? 'Enviando...' : 'Continuar'}
-                    <ArrowRight />
-                  </Button>
-                  {recordedAudio && (
-                    <>
-                      <div className='flex gap-4 text-base font-medium items-center h-7'>
-                        <div className='w-full h-px bg-neutral-200' />
-                        <p className='text-neutral-400 whitespace-nowrap font-normal'>
-                          o también
-                        </p>
-                        <div className='w-full h-px bg-neutral-200' />
-                      </div>
+                  <div className='w-full fixed bottom-10 space-y-2 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
+                    <Button
+                      onClick={handleSubmitAudio}
+                      variant='primary'
+                      className='w-full flex gap-1.5'
+                      disabled={loading || !recordedAudio}
+                    >
+                      {loading ? 'Enviando...' : 'Continuar'}
+                      <ArrowRight />
+                    </Button>
+                    {recordedAudio && (
+                      <>
+                        <div className='flex gap-4 text-base font-medium items-center h-7'>
+                          <div className='w-full h-px bg-neutral-200' />
+                          <p className='text-neutral-400 whitespace-nowrap font-normal'>
+                            o también
+                          </p>
+                          <div className='w-full h-px bg-neutral-200' />
+                        </div>
 
-                      <Button
-                        size='lg'
-                        variant='secondary'
-                        onClick={() => {
-                          setRecordedAudio(null);
-                          setAudioChunks([]);
-                          setFastResponse(null); // Clear fast response when re-recording
-                        }}
-                        className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black'
-                      >
-                        Grabar Denuevo
-                      </Button>
-                    </>
-                  )}
+                        <Button
+                          size='lg'
+                          variant='secondary'
+                          onClick={() => {
+                            setRecordedAudio(null);
+                            setAudioChunks([]);
+                            setFastResponse(null); // Clear fast response when re-recording
+                          }}
+                          className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black w-full'
+                        >
+                          Grabar Denuevo
+                        </Button>
+                      </>
+                    )}
+                  </div>
                 </>
               )}
             </div>
