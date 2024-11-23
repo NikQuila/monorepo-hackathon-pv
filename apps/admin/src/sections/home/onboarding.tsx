@@ -182,8 +182,8 @@ export default function Onboarding() {
   return (
     <div
       className={cn(
-        'flex flex-col min-h-screen p-12 pb-8 pt-16 md:pb-24', // Reduce el padding bottom en móvil
-        'bg-brandgradient fixed inset-0 z-50 overflow-y-auto', // Añade overflow-y-auto
+        'flex flex-col min-h-screen p-12 pb-24 pt-16',
+        'bg-brandgradient fixed inset-0 z-50',
         currentStep === 'welcome'
           ? 'justify-center items-center'
           : 'items-start justify-between'
@@ -214,7 +214,11 @@ export default function Onboarding() {
         </div>
       </div>
       {currentStep !== 'welcome' && (
-        <BlurFade delay={0.5} className='w-full' inView>
+        <BlurFade
+          delay={0.5}
+          className='w-full fixed bottom-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'
+          inView
+        >
           <Button
             onClick={handleContinue}
             variant='primary'
