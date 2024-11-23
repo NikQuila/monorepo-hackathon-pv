@@ -1,4 +1,3 @@
-import '../../index.css';
 import { useState } from 'react';
 import {
   registerWithEmailAndPassword,
@@ -20,7 +19,7 @@ export default function Register({ setView }: Props) {
     setError('');
     setLoading(true);
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Las contraseñas no coinciden');
       setLoading(false);
       return;
     }
@@ -30,52 +29,79 @@ export default function Register({ setView }: Props) {
         await createUserProfile({ ...user });
       }
     } catch (error) {
-      setError('Error registering user');
+      setError('Error al registrar usuario');
     }
     setLoading(false);
   };
 
   return (
-    <div className='flex h-screen w-full items-center justify-center bg-gray-200'>
-      <div className='w-full max-w-[400px] rounded-lg bg-white p-8 shadow'>
-        <h2 className='text-center text-2xl font-bold'>Register</h2>
-        <div className='mt-4'>
-          <input
-            type='email'
-            placeholder='Email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className='mt-2 w-full rounded border border-gray-300 p-2'
-          />
-          <input
-            type='password'
-            placeholder='Password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className='mt-2 w-full rounded border border-gray-300 p-2'
-          />
-          <input
-            type='password'
-            placeholder='Confirm Password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className='mt-2 w-full rounded border border-gray-300 p-2'
-          />
-          {error && <p className='mt-2 text-red-500'>{error}</p>}
+    <div className='flex h-screen w-full items-center justify-center bg-gray-50'>
+      <div className='w-full max-w-[400px] space-y-8 rounded-lg bg-white p-8 shadow-sm'>
+        {/* Logo */}
+        <div className='flex flex-col items-center gap-2'>
+          <div className='h-12 w-12 rounded-lg bg-gray-200'></div>
+          <h2 className='text-2xl font-semibold'>Registrate en Journie</h2>
+        </div>
+
+        {/* Form */}
+        <div className='space-y-4'>
+          <div className='space-y-2'>
+            <label className='text-sm font-medium text-gray-700'>Email</label>
+            <input
+              type='email'
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className='w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-blue-500 focus:outline-none'
+              placeholder='m@journie.com'
+            />
+          </div>
+
+          <div className='space-y-2'>
+            <label className='text-sm font-medium text-gray-700'>
+              Contraseña
+            </label>
+            <input
+              type='password'
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className='w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-blue-500 focus:outline-none'
+              placeholder='********'
+            />
+          </div>
+
+          <div className='space-y-2'>
+            <label className='text-sm font-medium text-gray-700'>
+              Confirmar Contraseña
+            </label>
+            <input
+              type='password'
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className='w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-blue-500 focus:outline-none'
+              placeholder='********'
+            />
+          </div>
+
+          {error && <p className='text-sm text-red-500'>{error}</p>}
+
           <button
             onClick={handleRegister}
-            className='mt-4 w-full rounded bg-blue-500 p-2 text-white'
             disabled={loading}
+            className='w-full rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 p-3 text-white transition hover:opacity-90 disabled:opacity-50'
           >
-            {loading ? 'Registering...' : 'Register'}
+            {loading ? 'Registrando...' : 'Registrarse'}
           </button>
-          <p className='mt-4 text-center'>
-            Already have an account?{' '}
-            <button className='text-blue-500' onClick={() => setView('login')}>
-              Log in
-            </button>
-          </p>
         </div>
+
+        <p className='text-center text-sm text-gray-600'>
+          Ya tienes una cuenta?{' '}
+          <button
+            onClick={() => setView('login')}
+            className='font-medium text-blue-600 hover:underline'
+          >
+            Inicia sesión
+          </button>
+        </p>
       </div>
     </div>
   );
