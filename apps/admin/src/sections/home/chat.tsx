@@ -15,6 +15,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@common/components/ui/card';
+import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { fetchFile } from '@ffmpeg/util';
 
 type MessagePayload = {
   type: 'text' | 'audio';
@@ -43,6 +45,36 @@ export default function Chat() {
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [loading, setLoading] = useState(false);
   const [fastResponse, setFastResponse] = useState<FastResponse | null>(null);
+  const [ffmpeg] = useState(() => new FFmpeg());
+  const [ffmpegLoaded, setFfmpegLoaded] = useState(false);
+
+  useEffect(() => {
+    // Cargar FFmpeg al montar el componente
+    ffmpeg.load().then(() => {
+      setFfmpegLoaded(true);
+      console.log('FFmpeg loaded');
+    });
+  }, [ffmpeg]);
+
+  const convertAudioToMp3 = async (audioBlob: Blob): Promise<Blob> => {
+    try {
+      // Escribir el archivo de entrada
+      const inputFileName = 'input.m4a';
+      const outputFileName = 'output.mp3';
+
+      await ffmpeg.writeFile(inputFileName, await fetchFile(audioBlob));
+
+      // Ejecutar la conversión
+      await ffmpeg.exec(['-i', inputFileName, outputFileName]);
+
+      // Leer el archivo convertido
+      const data = await ffmpeg.readFile(outputFileName);
+      return new Blob([data], { type: 'audio/mp3' });
+    } catch (error) {
+      console.error('Error converting audio:', error);
+      throw error;
+    }
+  };
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
@@ -152,21 +184,21 @@ export default function Chat() {
 
     setLoading(true);
     try {
-      // Determine if we need to convert the format
-      const currentFormat = recordedAudio.type;
       let finalAudio = recordedAudio;
       let extension = 'webm';
 
-      // For iOS devices, ensure we're using a compatible format
+      // Convertir audio si es necesario (iOS)
       if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        extension = 'm4a';
+        console.log('📱 Dispositivo iOS detectado, convirtiendo audio...');
+        finalAudio = await convertAudioToMp3(recordedAudio);
+        extension = 'mp3';
       }
 
       const fileName = `audio_${Date.now()}.${extension}`;
 
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('audios')
-        .upload(fileName, recordedAudio);
+        .upload(fileName, finalAudio);
 
       if (uploadError) throw uploadError;
 
@@ -183,13 +215,11 @@ export default function Chat() {
         user_id: userProfile?.id as string,
       };
 
-      // 4. Call both endpoints simultaneously
       const [fastResponseResult] = await Promise.all([
         sendJournalFastResponse(payload),
-        sendMessageOrAudio(payload), // We still call this but don't wait for the result
+        sendMessageOrAudio(payload),
       ]);
 
-      // 5. Set fast response to show UI
       setFastResponse(fastResponseResult);
       toast.success('¡Gracias por subir tu journal!');
     } catch (error) {
