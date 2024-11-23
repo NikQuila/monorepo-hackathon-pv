@@ -15,7 +15,7 @@ const App = () => {
   return (
     <div className='min-h-screen'>
       <ToastContainer />
-      <main className='container mx-auto px-4 pb-16'>
+      <main className=''>
         <RoutesConfig />
       </main>
       <BottomNav />

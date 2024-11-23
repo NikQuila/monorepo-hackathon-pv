@@ -14,3 +14,23 @@ export const fetchUserProfile = async (userId: string) => {
     throw new Error('Failed to fetch user profile');
   }
 };
+
+export const updateUserProfile = async (
+  userId: string,
+  updates: Partial<any>
+) => {
+  try {
+    const { data, error } = await supabase
+      .from('users')
+      .update(updates)
+      .eq('id', userId)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to update user profile');
+  }
+};
