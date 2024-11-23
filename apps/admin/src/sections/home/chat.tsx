@@ -47,12 +47,12 @@ export default function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const getSupportedMimeType = () => {
+    // Prioritize formats that work well with OpenAI
     const types = [
-      'audio/webm',
+      'audio/webm', // Most compatible
       'audio/mp4',
-      'audio/aac',
-      'audio/wav',
       'audio/ogg',
+      'audio/wav',
     ];
 
     for (const type of types) {
@@ -60,7 +60,13 @@ export default function Chat() {
         return type;
       }
     }
-    return '';
+
+    // Fallback to mp4 for iOS
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      return 'audio/mp4';
+    }
+
+    return 'audio/webm'; // Default fallback
   };
 
   const startRecording = async () => {
@@ -266,7 +272,7 @@ export default function Chat() {
                   className={cn(
                     'absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200',
                     isRecording
-                      ? 'animate-ripple -mt-10'
+                      ? 'animate-ripple -mt-20'
                       : 'text-white top-0 left-0 -mt-16'
                   )}
                 >
@@ -276,57 +282,64 @@ export default function Chat() {
             </div>
 
             <div className='z-20 flex flex-col gap-3 w-full'>
-              {!recordedAudio && isRecording ? (
+              {!recordedAudio && !isRecording ? (
                 <>
-                  <div className='flex gap-4 text-base font-medium items-center h-7'>
-                    <div className='w-full h-px bg-neutral-200' />
-                    <p className='text-neutral-400 whitespace-nowrap font-normal'>
-                      o también
-                    </p>
-                    <div className='w-full h-px bg-neutral-200' />
+                  <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
+                    <div className='flex gap-4 text-base font-medium items-center h-7'>
+                      <div className='w-full h-px bg-neutral-200' />
+                      <p className='text-neutral-400 whitespace-nowrap font-normal'>
+                        o también
+                      </p>
+                      <div className='w-full h-px bg-neutral-200' />
+                    </div>
+                    <TextAreaDrawer
+                      message={message}
+                      setMessage={setMessage}
+                      handleSendMessage={handleSendMessage}
+                      disabled={loading}
+                    />
                   </div>
-                  <TextAreaDrawer
-                    message={message}
-                    setMessage={setMessage}
-                    handleSendMessage={handleSendMessage}
-                    disabled={loading}
-                  />
                 </>
               ) : (
                 <>
-                  <Button
-                    onClick={handleSubmitAudio}
-                    variant='primary'
-                    className='w-full flex gap-1.5'
-                    disabled={loading || !recordedAudio}
-                  >
-                    {loading ? 'Enviando...' : 'Continuar'}
-                    <ArrowRight />
-                  </Button>
-                  {recordedAudio && (
-                    <>
-                      <div className='flex gap-4 text-base font-medium items-center h-7'>
-                        <div className='w-full h-px bg-neutral-200' />
-                        <p className='text-neutral-400 whitespace-nowrap font-normal'>
-                          o también
-                        </p>
-                        <div className='w-full h-px bg-neutral-200' />
-                      </div>
 
-                      <Button
-                        size='lg'
-                        variant='secondary'
-                        onClick={() => {
-                          setRecordedAudio(null);
-                          setAudioChunks([]);
-                          setFastResponse(null);
-                        }}
-                        className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black'
-                      >
-                        Grabar denuevo
-                      </Button>
-                    </>
-                  )}
+
+                  <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
+                    <Button
+                      onClick={handleSubmitAudio}
+                      variant='primary'
+                      className='w-full flex gap-1.5'
+                      disabled={loading || !recordedAudio}
+                    >
+                      {loading ? 'Enviando...' : 'Continuar'}
+                      <ArrowRight />
+                    </Button>
+                    {recordedAudio && (
+                      <>
+                        <div className='flex gap-4 text-base font-medium items-center h-7'>
+                          <div className='w-full h-px bg-neutral-200' />
+                          <p className='text-neutral-400 whitespace-nowrap font-normal'>
+                            o también
+                          </p>
+                          <div className='w-full h-px bg-neutral-200' />
+                        </div>
+
+                        <Button
+                          size='lg'
+                          variant='secondary'
+                          onClick={() => {
+                            setRecordedAudio(null);
+                            setAudioChunks([]);
+                            setFastResponse(null); // Clear fast response when re-recording
+                          }}
+                          className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black w-full'
+                        >
+                          Grabar Denuevo
+                        </Button>
+                      </>
+                    )}
+                  </div>
+
                 </>
               )}
             </div>
