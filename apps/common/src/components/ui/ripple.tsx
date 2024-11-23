@@ -20,7 +20,7 @@ const Ripple = React.memo(function Ripple({
   return (
     <div
       className={cn(
-        "pointer-events-none select-none absolute inset-0 -mt-24",
+        "pointer-events-auto absolute inset-0 -mt-16 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-48",
       )}
     >
       {Array.from({ length: numCircles }, (_, i) => {
@@ -40,9 +40,7 @@ const Ripple = React.memo(function Ripple({
                 height: `${size}px`,
                 opacity,
                 animationDelay,
-                borderStyle,
                 borderWidth: "1px",
-                borderColor: `rgba(251, 205, 156, ${borderOpacity / 100})`,
                 top: "50%",
                 left: "50%",
                 transform: "translate(-50%, -50%) scale(1)",

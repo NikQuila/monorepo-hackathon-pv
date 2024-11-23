@@ -117,7 +117,9 @@ export default function Chat() {
     }
   };
 
-  const handleSubmitAudio = async () => {
+  const handleSubmitAudio = async (event: React.FormEvent) => {
+    event.preventDefault();
+
     if (!recordedAudio) return;
 
     setLoading(true);
@@ -182,10 +184,10 @@ export default function Chat() {
   return (
     <div className='flex flex-col items-center fixed inset-0 z-50 bg-brandgradient'>
       <div className="relative h-full min-h-screen w-full max-w-96 p-12 justify-between flex items-center flex-col">
-        <h1 className="text-2xl text-center font-normal">
+        <h1 className="z-0 text-2xl text-center font-normal">
           {isRecording ? 'Te escucho...' : 'Cuéntame algo'}
         </h1>
-        <button onClick={handleToggleRecording} disabled={loading}>
+        <button onClick={handleToggleRecording} disabled={loading} className="size-1 overflow-hidden pointer-events-none">
           <Ripple
             numCircles={isRecording ? 3 : 1}
             mainCircleSize={164}
@@ -195,13 +197,13 @@ export default function Chat() {
           />
           <div className={cn(
             "absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200",
-            isRecording ? "animate-ripple" : "text-white top-0 left-0 -mt-12"
+            isRecording ? "animate-ripple -mt-10" : "text-white top-0 left-0 -mt-16"
           )}>
             {isRecording ? <Mic /> : <MicOff />}
           </div>
         </button>
-        <div className='flex flex-col gap-3 w-full'>
-          {recordedAudio && !isRecording ? (
+        <div className='z-20 flex flex-col gap-3 w-full'>
+          {!recordedAudio && isRecording ? (
             <>
               <div className="flex gap-4 text-base font-medium items-center h-7">
                 <div className="w-full h-px bg-neutral-200" />
@@ -221,8 +223,9 @@ export default function Chat() {
                 onClick={handleSubmitAudio}
                 variant="primary"
                 className="w-full flex gap-1.5"
+                disabled={loading || !recordedAudio}
               >
-                Continuar
+                {loading ? 'Enviando...' : 'Continuar'}
                 <ArrowRight />
               </Button>
               <div className="flex gap-4 text-base font-medium items-center h-7">
