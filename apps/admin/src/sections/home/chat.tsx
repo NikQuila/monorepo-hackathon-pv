@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
-
+import { useLocation } from 'wouter';
 import { Mic, MicOff } from 'lucide-react';
+import { toast } from 'react-toastify';
 import {
   Card,
   CardContent,
@@ -9,6 +10,8 @@ import {
 } from '@common/components/ui/card';
 import { Input } from '@common/components/ui/input';
 import { Button } from '@common/components/ui/button';
+import { sendMessageOrAudio } from '@common/api/chat';
+import { supabase } from '@common/supabase';
 
 type MessagePayload = {
   type: 'text' | 'audio';
@@ -17,16 +20,24 @@ type MessagePayload = {
 };
 
 export default function Chat() {
+  const [, setLocation] = useLocation();
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const startRecording = async () => {
     try {
+      setAudioChunks([]);
+      setRecordedAudio(null);
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus',
+      });
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -34,11 +45,13 @@ export default function Chat() {
         }
       };
 
-      mediaRecorder.start();
+      // Configurar para que genere chunks cada 100ms
+      mediaRecorder.start(100);
       mediaRecorderRef.current = mediaRecorder;
       setIsRecording(true);
     } catch (error) {
       console.error('Error accessing microphone:', error);
+      toast.error('Error al acceder al micrófono');
     }
   };
 
@@ -49,16 +62,12 @@ export default function Chat() {
     ) {
       mediaRecorderRef.current.stop();
 
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-
-      const payload: MessagePayload = {
-        type: 'audio',
-        content: audioBlob,
-        timestamp: Date.now(),
+      // Esperar a que se procesen todos los chunks
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        setRecordedAudio(audioBlob);
+        setAudioChunks([]); // Limpiar los chunks después de crear el blob
       };
-
-      console.log('Sending audio payload:', payload);
-      setAudioChunks([]);
 
       mediaRecorderRef.current.stream
         .getTracks()
@@ -68,7 +77,47 @@ export default function Chat() {
     setIsRecording(false);
   };
 
-  const handleSendMessage = () => {
+  const handleSubmitAudio = async () => {
+    if (!recordedAudio) return;
+
+    setLoading(true);
+    try {
+      // 1. Upload to Supabase Storage
+      const fileName = `audio_${Date.now()}.webm`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('audios')
+        .upload(fileName, recordedAudio);
+
+      if (uploadError) throw uploadError;
+
+      // 2. Get public URL
+      const { data: publicData } = supabase.storage
+        .from('audios')
+        .getPublicUrl(fileName);
+
+      console.log('🚀 URL pública:', publicData.publicUrl);
+
+      // 3. Send URL to backend
+      const payload: MessagePayload = {
+        type: 'audio',
+        content: publicData.publicUrl,
+        timestamp: Date.now(),
+      };
+
+      console.log('Sending audio payload:', payload);
+      await sendMessageOrAudio(payload);
+
+      toast.success('¡Gracias por subir tu journal!');
+    } catch (error) {
+      console.error('Error submitting audio:', error);
+      toast.error('Error al enviar el audio');
+    } finally {
+      setLoading(false);
+      setRecordedAudio(null);
+    }
+  };
+
+  const handleSendMessage = async () => {
     if (message.trim()) {
       const payload: MessagePayload = {
         type: 'text',
@@ -77,6 +126,7 @@ export default function Chat() {
       };
 
       console.log('Sending text payload:', payload);
+      await sendMessageOrAudio(payload);
       setMessage('');
     }
   };
@@ -95,6 +145,7 @@ export default function Chat() {
                 isRecording && 'animate-pulse'
               }`}
               onClick={isRecording ? stopRecording : startRecording}
+              disabled={loading}
             >
               {isRecording ? (
                 <MicOff className='h-8 w-8' />
@@ -107,6 +158,20 @@ export default function Chat() {
                 Grabando... (Click para detener)
               </span>
             )}
+            {recordedAudio && !isRecording && (
+              <div className='flex flex-col items-center gap-2'>
+                <span className='text-sm text-gray-500'>
+                  Audio grabado y listo para enviar
+                </span>
+                <Button
+                  onClick={handleSubmitAudio}
+                  className='bg-green-600 hover:bg-green-700'
+                  disabled={loading}
+                >
+                  {loading ? 'Enviando...' : 'Enviar Journal'}
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className='flex gap-2'>
@@ -115,8 +180,11 @@ export default function Chat() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className='flex-1'
+              disabled={loading}
             />
-            <Button onClick={handleSendMessage}>Escribe</Button>
+            <Button onClick={handleSendMessage} disabled={loading}>
+              Escribe
+            </Button>
           </div>
         </CardContent>
       </Card>
