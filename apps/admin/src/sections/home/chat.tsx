@@ -10,6 +10,8 @@ import {
 } from '@common/components/ui/card';
 import { Input } from '@common/components/ui/input';
 import { Button } from '@common/components/ui/button';
+import { sendMessageOrAudio } from '@common/api/chat';
+import { supabase } from '@common/supabase';
 
 type MessagePayload = {
   type: 'text' | 'audio';
@@ -29,8 +31,13 @@ export default function Chat() {
 
   const startRecording = async () => {
     try {
+      setAudioChunks([]);
+      setRecordedAudio(null);
+
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus',
+      });
 
       mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -38,7 +45,8 @@ export default function Chat() {
         }
       };
 
-      mediaRecorder.start();
+      // Configurar para que genere chunks cada 100ms
+      mediaRecorder.start(100);
       mediaRecorderRef.current = mediaRecorder;
       setIsRecording(true);
     } catch (error) {
@@ -54,9 +62,12 @@ export default function Chat() {
     ) {
       mediaRecorderRef.current.stop();
 
-      const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-      setRecordedAudio(audioBlob);
-      setAudioChunks([]);
+      // Esperar a que se procesen todos los chunks
+      mediaRecorderRef.current.onstop = () => {
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        setRecordedAudio(audioBlob);
+        setAudioChunks([]); // Limpiar los chunks después de crear el blob
+      };
 
       mediaRecorderRef.current.stream
         .getTracks()
@@ -71,14 +82,35 @@ export default function Chat() {
 
     setLoading(true);
     try {
+      // 1. Upload to Supabase Storage
+      const fileName = `audio_${Date.now()}.webm`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('audios')
+        .upload(fileName, recordedAudio);
+
+      if (uploadError) throw uploadError;
+
+      // 2. Get public URL
+      const { data: publicData, error: publicUrlError } = supabase.storage
+        .from('audios')
+        .getPublicUrl(fileName);
+
+      if (publicUrlError) {
+        console.error('Error getting public URL:', publicUrlError);
+        throw publicUrlError;
+      }
+
+      console.log('🚀 URL pública:', publicData.publicUrl);
+
+      // 3. Send URL to backend
       const payload: MessagePayload = {
         type: 'audio',
-        content: recordedAudio,
+        content: publicData.publicUrl,
         timestamp: Date.now(),
       };
 
       console.log('Sending audio payload:', payload);
-      // Here you would typically send the audio to your backend
+      await sendMessageOrAudio(payload);
 
       toast.success('¡Gracias por subir tu journal!');
     } catch (error) {
@@ -90,7 +122,7 @@ export default function Chat() {
     }
   };
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (message.trim()) {
       const payload: MessagePayload = {
         type: 'text',
@@ -99,6 +131,7 @@ export default function Chat() {
       };
 
       console.log('Sending text payload:', payload);
+      await sendMessageOrAudio(payload);
       setMessage('');
     }
   };
