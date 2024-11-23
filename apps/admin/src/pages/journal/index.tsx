@@ -48,7 +48,7 @@ const JournalPage = () => {
     mockEntries[formattedDate] || 'No hay entrada para este día.';
 
   return (
-    <div className='max-w-96 mx-auto'>
+    <div className='mx-auto'>
       <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
         <div className="w-full flex justify-between px-3">
           {weekDays.map((day, index) => (
@@ -82,12 +82,12 @@ const JournalPage = () => {
         </div>
       </div>
 
-      <ScrollArea className='bg-white px-3 pt-6 pb-40'>
+      <ScrollArea className='px-3 pt-6 pb-40'>
         <div className='space-y-6'>
           <div className='relative'>
             {entryContent === 'No hay entrada para este día.' ? (
               <>
-                <div className="fixed top-1/2 -translate-y-1/2 inset-x-4 text-center flex flex-col gap-3 z-10 mx-2 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10">
+                <div className="max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10">
                   <span className="text-sm text-neutral-900">Hoy</span>
                   <h1 className="text-xl font-semibold text-neutral-900">
                     No has escrito nada todavía.

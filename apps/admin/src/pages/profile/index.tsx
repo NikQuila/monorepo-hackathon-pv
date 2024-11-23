@@ -18,7 +18,7 @@ const ProfilePage = () => {
       <div className="flex gap-2 items-center p-3 justify-between">
         <img src="https://avatars.dicebear.com/api/avataaars/mati.svg" alt="avatar" className="size-7 rounded-full" />
         <h1 className="font-bold text-sm w-full">Mati</h1>
-        <Button size="icon" variant="ghost" onClick={signOut}>
+        <Button size="icon" variant="ghost" className="shrink-0 hover:bg-black/40" onClick={signOut}>
           <LogOut />
         </Button>
       </div>
@@ -37,12 +37,12 @@ const ProfilePage = () => {
           ))}
         </div>
       </div>
-      <div className="bg-white w-full flex flex-col gap-6 rounded-t-[24px] p-6">
+      <div className="bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] p-6">
         <h2 className="text-lg font-semibold">Este mes</h2>
         <h3 className="text-lg font-medium text-neutral-500">
           Lo mejor!
         </h3>
-        <div className="-mt-2 flex bg-neutral-200/40 h-96 rounded-md w-full"></div>
+        <div className="-mt-2 flex bg-neutral-200/40 h-96 mb-40 rounded-md w-full"></div>
       </div>
     </div>
   );
