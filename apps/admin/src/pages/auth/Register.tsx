@@ -1,103 +1,111 @@
-import { useState } from 'react';
+import { useState, SetStateAction } from "react";
+import { Input } from "@common/components/ui/input";
+import { Label } from "@common/components/ui/label";
+import { Button } from "@common/components/ui/button";
 import {
   registerWithEmailAndPassword,
   createUserProfile,
-} from 'common/src/api/auth';
+} from "common/src/api/auth";
 
 type Props = {
-  setView: (view: 'login' | 'register') => void;
+  setView: (view: "login" | "register") => void;
 };
 
 export default function Register({ setView }: Props) {
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState("");
 
   const handleRegister = async () => {
-    setError('');
+    setError("");
     setLoading(true);
+
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       setLoading(false);
       return;
     }
+
     try {
       const user = await registerWithEmailAndPassword(email, password);
       if (user) {
         await createUserProfile({ ...user });
       }
     } catch (error) {
-      setError('Error al registrar usuario');
+      setError("Error al registrar usuario");
     }
+
     setLoading(false);
   };
 
   return (
-    <div className='flex h-screen w-full items-center justify-center bg-gray-50'>
-      <div className='w-full max-w-[400px] space-y-8 rounded-lg bg-white p-8 shadow-sm'>
-        {/* Logo */}
-        <div className='flex flex-col items-center gap-2'>
-          <div className='h-12 w-12 rounded-lg bg-gray-200'></div>
-          <h2 className='text-2xl font-semibold'>Registrate en Journie</h2>
+    <div className="flex flex-col text-neutral-800 h-screen w-full *:w-full *:*:w-full p-12 pt-24 items-start justify-between">
+      <div className="flex flex-col items-center gap-12">
+        <div className="flex flex-col items-center gap-5">
+          <div className="flex items-center justify-center size-20">
+            <img src="/isotipo.svg" alt="Journie" className="h-12 w-auto" />
+          </div>
+          <h2 className="text-2xl font-medium">Regístrate en Journie</h2>
         </div>
 
-        {/* Form */}
-        <div className='space-y-4'>
-          <div className='space-y-2'>
-            <label className='text-sm font-medium text-gray-700'>Email</label>
-            <input
-              type='email'
+        <div className="space-y-8 max-w-96">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className='w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-blue-500 focus:outline-none'
-              placeholder='m@journie.com'
+              onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                setEmail(e.target.value)
+              }
+              className="border-transparent bg-neutral-200/30 shadow-none"
+              placeholder="m@journie.com"
+              type="email"
             />
           </div>
 
-          <div className='space-y-2'>
-            <label className='text-sm font-medium text-gray-700'>
-              Contraseña
-            </label>
-            <input
-              type='password'
+          <div className="space-y-2">
+            <Label htmlFor="password">Contraseña</Label>
+            <Input
+              id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className='w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-blue-500 focus:outline-none'
-              placeholder='********'
+              onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                setPassword(e.target.value)
+              }
+              className="border-transparent bg-neutral-200/30 shadow-none"
+              placeholder="********"
+              type="password"
             />
           </div>
 
-          <div className='space-y-2'>
-            <label className='text-sm font-medium text-gray-700'>
-              Confirmar Contraseña
-            </label>
-            <input
-              type='password'
+          <div className="space-y-2">
+            <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
+            <Input
+              id="confirm-password"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className='w-full rounded-lg border border-gray-200 p-3 text-sm focus:border-blue-500 focus:outline-none'
-              placeholder='********'
+              onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                setConfirmPassword(e.target.value)
+              }
+              className="border-transparent bg-neutral-200/30 shadow-none"
+              placeholder="********"
+              type="password"
             />
           </div>
 
-          {error && <p className='text-sm text-red-500'>{error}</p>}
-
-          <button
-            onClick={handleRegister}
-            disabled={loading}
-            className='w-full rounded-lg bg-gradient-to-r from-pink-500 to-purple-500 p-3 text-white transition hover:opacity-90 disabled:opacity-50'
-          >
-            {loading ? 'Registrando...' : 'Registrarse'}
-          </button>
+          {error && <p className="text-red-500/80 text-sm font-medium">⚠️ {error}</p>}
         </div>
+      </div>
 
-        <p className='text-center text-sm text-gray-600'>
-          Ya tienes una cuenta?{' '}
+      <div className="flex flex-col gap-4 max-w-96 mx-auto">
+        <Button onClick={handleRegister} disabled={loading} variant="primary">
+          {loading ? "Registrando..." : "Registrarse"}
+        </Button>
+        <p className="text-center text-sm text-gray-400 h-10 flex gap-1.5 justify-center items-center">
+          Ya tienes una cuenta?{" "}
           <button
-            onClick={() => setView('login')}
-            className='font-medium text-blue-600 hover:underline'
+            onClick={() => setView("login")}
+            className="font-medium text-neutral-800 underline hover:text-neutral-800/80"
           >
             Inicia sesión
           </button>

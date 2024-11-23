@@ -10,23 +10,32 @@ import {
 import { updateUserProfile } from '@common/api/users';
 import { toast } from 'react-toastify';
 import useUserStore from '@/store/useUserStore';
-import { motion, AnimatePresence } from 'framer-motion';
+import BlurFade from '@common/components/ui/blur-fade';
+import { cn } from '@/lib/utils';
 
-type Step = 'welcome' | 'name' | 'age' | 'ready';
+type Step = 'welcome' | 'name' | 'age' | 'job' | 'ready';
 
 const ageOptions = [
-  { value: '18-24', label: '18-24' },
-  { value: '25-34', label: '25-34' },
-  { value: '35-44', label: '35-44' },
-  { value: '45-54', label: '45-54' },
-  { value: '55-64', label: '55-64' },
-  { value: '65+', label: '65+' },
+  { value: '18-24', label: '👨‍🎓 Entre 18 a 24' },
+  { value: '25-34', label: '🕺 Entre 25 a 34' },
+  { value: '35-44', label: '👩‍💼 Entre 35 a 44' },
+  { value: '45-54', label: '🏡 Entre 45 a 54' },
+  { value: '55-64', label: '👴🏻 Más de 55' },
+];
+
+const jobOptions = [
+  { value: 'estudio', label: '📚 Estudio' },
+  { value: 'trabajo', label: '💼 Trabajo' },
+  { value: 'deporte', label: '💪 Deporte' },
+  { value: 'familia', label: '👨‍👩‍👧‍👦 Mi familia' },
+  { value: 'jubilado', label: '👴🏻 Jubilado' },
 ];
 
 export default function Onboarding() {
   const { userProfile, refreshUserProfile } = useUserStore();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
+  const [job, setJob] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentStep, setCurrentStep] = useState<Step>('welcome');
@@ -57,6 +66,16 @@ export default function Onboarding() {
         return;
       }
       setError('');
+      setCurrentStep('job');
+      return;
+    }
+
+    if (currentStep === 'job') {
+      if (!job) {
+        setError('Por favor selecciona tu ocupación');
+        return;
+      }
+      setError('');
       setCurrentStep('ready');
       return;
     }
@@ -64,7 +83,6 @@ export default function Onboarding() {
     if (currentStep === 'ready') {
       setLoading(true);
       setError('');
-      // Calculate average age from range
       let calculatedAge =
         age === '65+'
           ? '65+'
@@ -91,123 +109,126 @@ export default function Onboarding() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 'welcome':
-        return (
-          <motion.div
-            key='welcome'
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className='text-center text-lg'
-          >
-            Empecemos creando tu perfil
-          </motion.div>
-        );
+        return <></>;
       case 'name':
         return (
-          <motion.div
-            key='name'
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-          >
+          <BlurFade delay={0.5} inView>
             <Input
-              placeholder='Tu nombre'
+              id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className='text-lg'
+              className="text-lg bg-transparent border-0"
+              placeholder="Tu nombre"
+              type="name"
               autoFocus
             />
-          </motion.div>
+          </BlurFade>
         );
       case 'age':
         return (
-          <motion.div
-            key='age'
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className='space-y-2'
-          >
-            {ageOptions.map((option) => (
-              <Button
-                key={option.value}
-                onClick={() => setAge(option.value)}
-                variant={age === option.value ? 'default' : 'outline'}
-                className='w-full justify-start text-left'
-              >
-                {option.label}
-              </Button>
+          <div className="space-y-2">
+            {ageOptions.map((option, index) => (
+              <BlurFade key={index} delay={index * 0.25} inView>
+                <Button
+                  onClick={() => setAge(option.value)}
+                  variant={age === option.value ? 'primary' : 'outline'}
+                  className="w-full justify-start text-center h-[50px] py-3 rounded shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]"
+                >
+                  {option.label}
+                </Button>
+              </BlurFade>
             ))}
-          </motion.div>
+          </div>
+        );
+      case 'job':
+        return (
+          <div className="space-y-2">
+            {jobOptions.map((option, index) => (
+              <BlurFade key={index} delay={index * 0.25} inView>
+                <Button
+                  onClick={() => setJob(option.value)}
+                  variant={job === option.value ? 'primary' : 'outline'}
+                  className="w-full justify-start text-center h-[50px] py-3 rounded shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]"
+                >
+                  {option.label}
+                </Button>
+              </BlurFade>
+            ))}
+          </div>
         );
       case 'ready':
         return (
-          <motion.div
-            key='ready'
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className='text-center space-y-4'
-          >
-            <p>Empezaremos creando tu primera entrada al diario.</p>
-            <p className='text-sm text-slate-500'>
-              No te sobrepienses, cualquier cosa sirve.
+          <div className="-mt-12 text-base text-center flex flex-col gap-3">
+            <div className="mb-3 flex text-5xl aspect-square rounded-full size-20 mx-auto items-center justify-center bg-[#E2E8FF]">
+              📖
+            </div>
+            <h5 className="text-2xl font-medium text-neutral-800">Todo listo?</h5>
+            <p className="text-base tracking-tight text-neutral-400 font-normal">Empezaremos creando tu primera entrada al diario.</p>
+            <p className="text-base tracking-tight text-neutral-400 font-normal">
+              No te sobrepienses, <span className="underline text-neutral-800">cualquier cosa sirve.</span>
             </p>
-          </motion.div>
+          </div>
         );
     }
   };
 
   return (
-    <div className='flex min-h-screen items-center justify-center bg-slate-50'>
-      <Card className='w-full max-w-md'>
-        <CardHeader>
-          <CardTitle className='text-2xl text-center'>
-            <AnimatePresence mode='wait'>
-              <motion.div
-                key={currentStep}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                {currentStep === 'welcome' && 'Hola, Soy Journie'}
-                {currentStep === 'name' && '¿Cuál es tu nombre?'}
-                {currentStep === 'age' && '¿Qué edad tienes?'}
-                {currentStep === 'ready' && '¿Todo listo?'}
-              </motion.div>
-            </AnimatePresence>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          <AnimatePresence mode='wait'>{renderStepContent()}</AnimatePresence>
+    <div
+      className={cn(
+        'flex flex-col min-h-screen p-12 pb-24 pt-16',
+        'bg-brandgradient fixed inset-0 z-50',
+        currentStep === 'welcome'
+          ? 'justify-center items-center'
+          : 'items-start justify-between'
+      )}
+    >
+      <div className="w-full max-w-md text-xl text-neutral-500 text-center flex flex-col gap-6">
+        <BlurFade delay={0.25}>
+          {currentStep === 'welcome' && 'Hola, Soy Journie'}
+        </BlurFade>
+        <BlurFade
+          delay={3.25}
+          inView
+        >
+          {currentStep === 'name' && '¿Cuál es tu nombre?'}
+        </BlurFade>
+        <BlurFade
+          delay={3.5}
+          inView
+        >
+          {currentStep === 'age' && '¿Qué edad tienes?'}
+        </BlurFade>
+        <BlurFade
+          delay={3.75}
+          inView
+        >
+          {currentStep === 'job' && '¿Qué ocupación tienes?'}
+        </BlurFade>
+        <BlurFade delay={0.5} className="text-2xl text-neutral-800" inView>
+          {currentStep === 'ready' && <></>}
+        </BlurFade>
+        <div className="space-y-4">
+          <BlurFade delay={0.25} inView>
+            {renderStepContent()}
+          </BlurFade>
 
           {error && (
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className='text-center text-sm text-red-500'
-            >
-              {error}
-            </motion.p>
+            <p className="text-center text-sm text-red-500">{error}</p>
           )}
-
-          {currentStep !== 'welcome' && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-            >
-              <Button
-                onClick={handleContinue}
-                className='w-full bg-pink-600 hover:bg-pink-700'
-                disabled={loading}
-              >
-                {loading ? 'Actualizando...' : 'Continuar'}
-              </Button>
-            </motion.div>
-          )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+      {currentStep !== 'welcome' && (
+        <BlurFade delay={0.5} className="w-full" inView>
+          <Button
+            onClick={handleContinue}
+            variant="primary"
+            className="w-full"
+            disabled={loading}
+          >
+            {loading ? 'Actualizando...' : 'Continuar'}
+          </Button>
+        </BlurFade>
+      )}
     </div>
   );
 }
