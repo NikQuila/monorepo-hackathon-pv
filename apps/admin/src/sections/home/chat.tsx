@@ -251,7 +251,7 @@ export default function Chat() {
                 onClick={handleToggleRecording}
                 disabled={loading || recordedAudio !== null}
                 className={cn(
-                  'size-1 overflow-hidden pointer-events-auto relative z-40', // Agregar pointer-events-auto y z-40
+                  ' overflow-hidden ',
                   recordedAudio ? 'pointer-events-none' : ''
                 )}
               >
@@ -293,7 +293,7 @@ export default function Chat() {
                       <div className='w-full h-px bg-neutral-200' />
                     </div>
                     {/* Envolver TextAreaDrawer en un div con pointer-events-auto */}
-                    <div className='pointer-events-auto relative z-50'>
+                    <div className='relative z-[60] isolate'>
                       <TextAreaDrawer
                         message={message}
                         setMessage={setMessage}
