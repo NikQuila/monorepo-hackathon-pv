@@ -18,7 +18,7 @@ const useUserStore = create<UserProfile>((set) => ({
   refreshUserProfile: async () => {
     try {
       const userData = await fetchUserProfile(
-        useUserStore.getState().userProfile?.auth_id
+        useUserStore.getState().userProfile?.auth_id as string
       );
       if (userData) {
         useUserStore.getState().setUserProfile(userData);
