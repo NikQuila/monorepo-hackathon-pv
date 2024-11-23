@@ -117,9 +117,9 @@ export default function Onboarding() {
               id='name'
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className='text-lg bg-transparent border-0'
-              placeholder='Tu nombre'
-              type='name'
+              className="text-lg bg-neutral-200/40 border-0"
+              placeholder="Tu nombre"
+              type="name"
               autoFocus
             />
           </BlurFade>
@@ -180,7 +180,8 @@ export default function Onboarding() {
   };
 
   return (
-    <div
+    <form
+      onSubmit={(e) => e.preventDefault()}
       className={cn(
         'flex flex-col min-h-screen p-12 pb-24 pt-16',
         'bg-brandgradient fixed inset-0 z-50',
@@ -189,7 +190,7 @@ export default function Onboarding() {
           : 'items-start justify-between'
       )}
     >
-      <div className='w-full max-w-md text-xl text-neutral-500 text-center flex flex-col gap-6'>
+      <div className="w-full max-w-md mx-auto text-xl text-neutral-500 text-center flex flex-col gap-6">
         <BlurFade delay={0.25}>
           {currentStep === 'welcome' && 'Hola, Soy Journie'}
         </BlurFade>
@@ -229,6 +230,6 @@ export default function Onboarding() {
           </Button>
         </BlurFade>
       )}
-    </div>
+    </form>
   );
 }

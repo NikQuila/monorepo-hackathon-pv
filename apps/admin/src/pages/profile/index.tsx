@@ -20,7 +20,6 @@ import {
 import ReactApexChart from 'react-apexcharts';
 
 const ProfilePage = () => {
-  // Sample data for the bar chart
   const barChartOptions = {
     chart: {
       type: 'bar',
