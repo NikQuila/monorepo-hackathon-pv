@@ -3,19 +3,32 @@ import { useLocation } from 'wouter';
 import { ArrowRight, Mic, MicOff } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@common/components/ui/button';
-import { sendMessageOrAudio } from '@common/api/chat';
+import { sendJournalFastResponse, sendMessageOrAudio } from '@common/api/chat';
 import { supabase } from '@common/supabase';
 import Ripple from '@common/components/ui/ripple';
 import { TextAreaDrawer } from '@common/components/text-area-drawer';
 import { cn } from '@/lib/utils';
+import useUserStore from '@/store/useUserStore';
 
 type MessagePayload = {
   type: 'text' | 'audio';
   content: string | Blob;
   timestamp: number;
+  user_id: string | number;
 };
 
+interface FastResponse {
+  title: string;
+  description: string;
+  mood_emoji: string;
+  recommendations: {
+    activity: string;
+    duration: string;
+  }[];
+}
+
 export default function Chat() {
+  const { userProfile } = useUserStore();
   const [, setLocation] = useLocation();
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -23,6 +36,7 @@ export default function Chat() {
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fastResponse, setFastResponse] = useState<FastResponse | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
@@ -137,15 +151,22 @@ export default function Chat() {
 
       console.log('🚀 URL pública:', publicData.publicUrl);
 
+
       const payload: MessagePayload = {
         type: 'audio',
         content: publicData.publicUrl,
         timestamp: Date.now(),
+        user_id: userProfile?.id as string,
       };
 
-      console.log('Sending audio payload:', payload);
-      await sendMessageOrAudio(payload);
+      // 4. Call both endpoints simultaneously
+      const [fastResponseResult] = await Promise.all([
+        sendJournalFastResponse(payload),
+        sendMessageOrAudio(payload), // We still call this but don't wait for the result
+      ]);
 
+      // 5. Set fast response to show UI
+      setFastResponse(fastResponseResult);
       toast.success('¡Gracias por subir tu journal!');
     } catch (error) {
       console.error('Error submitting audio:', error);
@@ -158,15 +179,30 @@ export default function Chat() {
 
   const handleSendMessage = async () => {
     if (message.trim()) {
-      const payload: MessagePayload = {
-        type: 'text',
-        content: message.trim(),
-        timestamp: Date.now(),
-      };
+      setLoading(true);
+      try {
+        const payload: MessagePayload = {
+          type: 'text',
+          content: message.trim(),
+          timestamp: Date.now(),
+          user_id: userProfile?.id as string,
+        };
 
-      console.log('Sending text payload:', payload);
-      await sendMessageOrAudio(payload);
-      setMessage('');
+        console.log('Sending text payload:', payload);
+        const [fastResponseResult] = await Promise.all([
+          sendJournalFastResponse(payload),
+          sendMessageOrAudio(payload),
+        ]);
+
+        setFastResponse(fastResponseResult);
+        setMessage('');
+        toast.success('¡Gracias por subir tu journal!');
+      } catch (error) {
+        console.error('Error sending message:', error);
+        toast.error('Error al enviar el mensaje');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -247,3 +283,36 @@ export default function Chat() {
     </div>
   );
 }
+
+const FastResponseUI = ({ response }: { response: FastResponse }) => {
+  return (
+    <Card className='w-full max-w-xl mx-auto mt-8'>
+      <CardHeader>
+        <div className='flex items-center gap-4'>
+          <div className='text-4xl'>{response.mood_emoji}</div>
+          <CardTitle>{response.title}</CardTitle>
+        </div>
+      </CardHeader>
+      <CardContent className='space-y-6'>
+        <p className='text-gray-600'>{response.description}</p>
+
+        {response.recommendations.length > 0 && (
+          <div className='space-y-4'>
+            <h3 className='font-semibold'>Recomendaciones:</h3>
+            <div className='grid gap-3'>
+              {response.recommendations.map((rec, index) => (
+                <div
+                  key={index}
+                  className='flex items-center justify-between p-3 rounded-lg bg-gray-50'
+                >
+                  <span>{rec.activity}</span>
+                  <span className='text-sm text-gray-500'>{rec.duration}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
