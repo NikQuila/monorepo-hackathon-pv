@@ -1,21 +1,25 @@
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 import RoutesConfig from './routes';
-import AuthPage from './pages/auth';
 import useAuthState from './hooks/useAuthState';
-import SidebarLayout from './components/layouts/sidebars';
+import AuthPage from './pages/auth';
+import { BottomNav } from '@common/components/bottom-nav';
 
 const App = () => {
   const { session, loading } = useAuthState();
-  return loading ? null : !session ? (
-    <AuthPage />
-  ) : (
-    <>
+
+  if (loading) return null;
+
+  if (!session) return <AuthPage />;
+
+  return (
+    <div className='min-h-screen'>
       <ToastContainer />
-      <SidebarLayout>
+      <main className='container mx-auto px-4 pb-16'>
         <RoutesConfig />
-      </SidebarLayout>
-    </>
+      </main>
+      <BottomNav />
+    </div>
   );
 };
 

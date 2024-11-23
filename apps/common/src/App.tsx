@@ -2,7 +2,7 @@ import { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import viteLogo from '/vite.svg';
 import { Button } from '@nextui-org/react';
-import './App.css';
+import './index.css';
 
 function App() {
   const [count, setCount] = useState(0);
