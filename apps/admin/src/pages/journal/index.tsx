@@ -3,6 +3,8 @@ import { Card, CardContent } from '@common/components/ui/card';
 import { Skeleton } from '@common/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { fetchJournalEntries } from '@common/api/journals';
+import { ScrollArea } from '@common/components/ui/scroll-area';
+import { Button } from '@common/components/ui/button';
 
 const JournalPage = () => {
   const today = DateTime.now();
@@ -52,10 +54,12 @@ const JournalPage = () => {
   return (
     <div className='mx-auto'>
       <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
-        <div className="w-full flex justify-between px-3">
+        <div className='w-full flex justify-between px-3'>
           {weekDays.map((day, index) => (
-            <div className="w-8 flex flex-col gap-1.5 items-center" key={index}>
-              <span className='text-[10px] font-bold'>{getDayInitial(day)}</span>
+            <div className='w-8 flex flex-col gap-1.5 items-center' key={index}>
+              <span className='text-[10px] font-bold'>
+                {getDayInitial(day)}
+              </span>
               <button
                 onClick={() => handleDayClick(day)}
                 className={`flex flex-col gap-1.5 items-center justify-center size-7 rounded-full transition-colors ${
@@ -89,21 +93,20 @@ const JournalPage = () => {
           <div className='relative'>
             {entryContent === 'No hay entrada para este día.' ? (
               <>
-                <div className="max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10">
-                  <span className="text-sm text-neutral-900">Hoy</span>
-                  <h1 className="text-xl font-semibold text-neutral-900">
+                <div className='max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10'>
+                  <span className='text-sm text-neutral-900'>Hoy</span>
+                  <h1 className='text-xl font-semibold text-neutral-900'>
                     No has escrito nada todavía.
                   </h1>
-                  <p className="text-base text-neutral-600">
-                    Cuéntanos sobre algo para poder entender mejor cómo ayudarte.
+                  <p className='text-base text-neutral-600'>
+                    Cuéntanos sobre algo para poder entender mejor cómo
+                    ayudarte.
                   </p>
-                  <Button variant="primary" className="mt-3">
+                  <Button variant='primary' className='mt-3'>
                     Cuéntame algo
                   </Button>
                 </div>
-                <div
-                  className='fixed inset-0 top-28 mx-4 flex flex-col'
-                >
+                <div className='fixed inset-0 top-28 mx-4 flex flex-col'>
                   {Array(15)
                     .fill(null)
                     .map((_, i) => (
@@ -125,10 +128,8 @@ const JournalPage = () => {
                 </div>
               </>
             )}
-            <div className="bg-gradient-to-t from-white to-transparent w-screen h-24 fixed bottom-20 inset-x-0 z-10" />
-            <div
-              className='absolute inset-0 flex flex-col -mt-0.5'
-            >
+            <div className='bg-gradient-to-t from-white to-transparent w-screen h-24 fixed bottom-20 inset-x-0 z-10' />
+            <div className='absolute inset-0 flex flex-col -mt-0.5'>
               {Array(15)
                 .fill(null)
                 .map((_, i) => (

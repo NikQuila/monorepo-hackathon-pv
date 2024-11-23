@@ -9,6 +9,12 @@ import Ripple from '@common/components/ui/ripple';
 import { TextAreaDrawer } from '@common/components/text-area-drawer';
 import { cn } from '@/lib/utils';
 import useUserStore from '@/store/useUserStore';
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@common/components/ui/card';
 
 type MessagePayload = {
   type: 'text' | 'audio';
@@ -21,9 +27,9 @@ interface FastResponse {
   title: string;
   description: string;
   mood_emoji: string;
-  recommendations: {
-    activity: string;
-    duration: string;
+  insights: {
+    text: string;
+    type: 'positive' | 'negative';
   }[];
 }
 
@@ -124,7 +130,10 @@ export default function Chat() {
   };
 
   const resumeRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
+    if (
+      mediaRecorderRef.current &&
+      mediaRecorderRef.current.state === 'paused'
+    ) {
       mediaRecorderRef.current.resume();
       setIsPaused(false);
       setIsRecording(true);
@@ -150,7 +159,6 @@ export default function Chat() {
         .getPublicUrl(fileName);
 
       console.log('🚀 URL pública:', publicData.publicUrl);
-
 
       const payload: MessagePayload = {
         type: 'audio',
@@ -216,77 +224,124 @@ export default function Chat() {
     }
   };
 
-
   return (
     <div className='flex flex-col items-center fixed inset-0 z-50 bg-brandgradient'>
-      <div className="relative h-full min-h-screen w-full max-w-96 p-12 justify-between flex items-center flex-col">
-        <h1 className="z-0 text-2xl text-center font-normal">
-          {isRecording ? 'Te escucho...' : 'Cuéntame algo'}
-        </h1>
-        <button onClick={handleToggleRecording} disabled={loading} className="size-1 overflow-hidden pointer-events-none">
-          <Ripple
-            numCircles={isRecording ? 3 : 1}
-            mainCircleSize={164}
-            mainCircleOpacity={!isRecording ? 1 : 0.24}
-            color={!isRecording ? 'bg-red-500' : 'bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec]'}
-            className={isRecording ? 'animate-ripple' : ''}
-          />
-          <div className={cn(
-            "absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200",
-            isRecording ? "animate-ripple -mt-10" : "text-white top-0 left-0 -mt-16"
-          )}>
-            {isRecording ? <Mic /> : <MicOff />}
-          </div>
-        </button>
-        <div className='z-20 flex flex-col gap-3 w-full'>
-          {!recordedAudio && isRecording ? (
-            <>
-              <div className="flex gap-4 text-base font-medium items-center h-7">
-                <div className="w-full h-px bg-neutral-200" />
-                <p className="text-neutral-400 whitespace-nowrap font-normal">o también</p>
-                <div className="w-full h-px bg-neutral-200" />
-              </div>
-              <TextAreaDrawer
-                message={message}
-                setMessage={setMessage}
-                handleSendMessage={handleSendMessage}
-                disabled={loading}
-              />
-            </>
-          ) : (
-            <>
-              <Button
-                onClick={handleSubmitAudio}
-                variant="primary"
-                className="w-full flex gap-1.5"
-                disabled={loading || !recordedAudio}
-              >
-                {loading ? 'Enviando...' : 'Continuar'}
-                <ArrowRight />
-              </Button>
-              <div className="flex gap-4 text-base font-medium items-center h-7">
-                <div className="w-full h-px bg-neutral-200" />
-                <p className="text-neutral-400 whitespace-nowrap font-normal">o también</p>
-                <div className="w-full h-px bg-neutral-200" />
-              </div>
-              <Button
-                size="lg"
-                variant="secondary"
-                className="rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black"
-              >
-                Seguir grabando
-              </Button>
-            </>
-          )}
+      {/* Fast Response UI */}
+      {fastResponse ? (
+        <div className='w-full animate-fade-in'>
+          <FastResponseUI response={fastResponse} />
         </div>
-      </div>
+      ) : (
+        <>
+          <div className='relative h-full min-h-screen w-full max-w-96 p-12 justify-between flex items-center flex-col'>
+            <h1 className='z-0 text-2xl text-center font-normal'>
+              {isRecording
+                ? 'Te escucho...'
+                : recordedAudio
+                ? 'Audio listo para enviar'
+                : 'Cuéntame algo'}
+            </h1>
+            <div className='flex flex-col items-center gap-4'>
+              <button
+                onClick={handleToggleRecording}
+                disabled={loading || recordedAudio !== null}
+                className={cn(
+                  'size-1 overflow-hidden',
+                  recordedAudio ? 'pointer-events-none' : ''
+                )}
+              >
+                <Ripple
+                  numCircles={isRecording ? 3 : 1}
+                  mainCircleSize={164}
+                  mainCircleOpacity={!isRecording ? 1 : 0.24}
+                  color={
+                    recordedAudio
+                      ? 'bg-green-500'
+                      : !isRecording
+                      ? 'bg-red-500'
+                      : 'bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec]'
+                  }
+                  className={isRecording ? 'animate-ripple' : ''}
+                />
+                <div
+                  className={cn(
+                    'absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200',
+                    isRecording
+                      ? 'animate-ripple -mt-10'
+                      : 'text-white top-0 left-0 -mt-16'
+                  )}
+                >
+                  {isRecording ? <Mic /> : recordedAudio ? <Mic /> : <MicOff />}
+                </div>
+              </button>
+            </div>
+
+            <div className='z-20 flex flex-col gap-3 w-full'>
+              {!recordedAudio && isRecording ? (
+                <>
+                  <div className='flex gap-4 text-base font-medium items-center h-7'>
+                    <div className='w-full h-px bg-neutral-200' />
+                    <p className='text-neutral-400 whitespace-nowrap font-normal'>
+                      o también
+                    </p>
+                    <div className='w-full h-px bg-neutral-200' />
+                  </div>
+                  <TextAreaDrawer
+                    message={message}
+                    setMessage={setMessage}
+                    handleSendMessage={handleSendMessage}
+                    disabled={loading}
+                  />
+                </>
+              ) : (
+                <>
+                  <Button
+                    onClick={handleSubmitAudio}
+                    variant='primary'
+                    className='w-full flex gap-1.5'
+                    disabled={loading || !recordedAudio}
+                  >
+                    {loading ? 'Enviando...' : 'Continuar'}
+                    <ArrowRight />
+                  </Button>
+                  {recordedAudio && (
+                    <>
+                      <div className='flex gap-4 text-base font-medium items-center h-7'>
+                        <div className='w-full h-px bg-neutral-200' />
+                        <p className='text-neutral-400 whitespace-nowrap font-normal'>
+                          o también
+                        </p>
+                        <div className='w-full h-px bg-neutral-200' />
+                      </div>
+
+                      <Button
+                        size='lg'
+                        variant='secondary'
+                        onClick={() => {
+                          setRecordedAudio(null);
+                          setAudioChunks([]);
+                          setFastResponse(null); // Clear fast response when re-recording
+                        }}
+                        className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black'
+                      >
+                        Grabar Denuevo
+                      </Button>
+                    </>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 const FastResponseUI = ({ response }: { response: FastResponse }) => {
+  const [, setLocation] = useLocation();
   return (
-    <Card className='w-full max-w-xl mx-auto mt-8'>
+    <Card className='w-full mb-6'>
       <CardHeader>
         <div className='flex items-center gap-4'>
           <div className='text-4xl'>{response.mood_emoji}</div>
@@ -296,22 +351,33 @@ const FastResponseUI = ({ response }: { response: FastResponse }) => {
       <CardContent className='space-y-6'>
         <p className='text-gray-600'>{response.description}</p>
 
-        {response.recommendations.length > 0 && (
+        {response.insights.length > 0 && (
           <div className='space-y-4'>
-            <h3 className='font-semibold'>Recomendaciones:</h3>
+            <h3 className='font-semibold'>Insights:</h3>
             <div className='grid gap-3'>
-              {response.recommendations.map((rec, index) => (
+              {response.insights.map((insight, index) => (
                 <div
                   key={index}
-                  className='flex items-center justify-between p-3 rounded-lg bg-gray-50'
+                  className={cn(
+                    'flex items-center justify-between p-3 rounded-lg',
+                    insight.type === 'positive' ? 'bg-green-50' : 'bg-red-50'
+                  )}
                 >
-                  <span>{rec.activity}</span>
-                  <span className='text-sm text-gray-500'>{rec.duration}</span>
+                  <span
+                    className={cn(
+                      insight.type === 'positive'
+                        ? 'text-green-700'
+                        : 'text-red-700'
+                    )}
+                  >
+                    {insight.text}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
         )}
+        <Button onClick={() => setLocation('/profile')}>Finalizar</Button>
       </CardContent>
     </Card>
   );
