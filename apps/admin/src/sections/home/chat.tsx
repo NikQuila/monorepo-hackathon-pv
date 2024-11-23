@@ -277,7 +277,7 @@ export default function Chat() {
             </div>
 
             <div className='z-20 flex flex-col gap-3 w-full'>
-              {!recordedAudio && isRecording ? (
+              {!recordedAudio && !isRecording ? (
                 <>
                   <div className='flex gap-4 text-base font-medium items-center h-7'>
                     <div className='w-full h-px bg-neutral-200' />
