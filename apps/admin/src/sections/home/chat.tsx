@@ -281,10 +281,10 @@ export default function Chat() {
               </button>
             </div>
 
-            <div className='z-20 flex flex-col gap-3 w-full'>
+            <div className='z-50 flex flex-col gap-3 w-full'>
               {!recordedAudio && !isRecording ? (
                 <>
-                  <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
+                  <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto '>
                     <div className='flex gap-4 text-base font-medium items-center h-7'>
                       <div className='w-full h-px bg-neutral-200' />
                       <p className='text-neutral-400 whitespace-nowrap font-normal'>
