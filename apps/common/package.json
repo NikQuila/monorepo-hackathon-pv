@@ -31,7 +31,8 @@
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.4",
     "tailwindcss-animate": "^1.0.7",
-    "usehooks-ts": "^3.1.0"
+    "usehooks-ts": "^3.1.0",
+    "vaul": "^1.1.1"
   },
   "devDependencies": {
     "@nextui-org/react": "^2.4.2",

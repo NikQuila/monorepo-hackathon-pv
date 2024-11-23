@@ -1,17 +1,12 @@
 import { useState, useRef } from 'react';
 import { useLocation } from 'wouter';
-import { Mic, MicOff } from 'lucide-react';
+import { ArrowRight, Mic, MicOff } from 'lucide-react';
 import { toast } from 'react-toastify';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@common/components/ui/card';
-import { Input } from '@common/components/ui/input';
 import { Button } from '@common/components/ui/button';
 import { sendMessageOrAudio } from '@common/api/chat';
 import { supabase } from '@common/supabase';
+import Ripple from '@common/components/ui/ripple';
+import { TextAreaDrawer } from '@common/components/text-area-drawer';
 
 type MessagePayload = {
   type: 'text' | 'audio';
@@ -23,6 +18,7 @@ export default function Chat() {
   const [, setLocation] = useLocation();
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
+  const [isPaused, setIsPaused] = useState(false); // New state for paused
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [loading, setLoading] = useState(false);
@@ -43,7 +39,7 @@ export default function Chat() {
         return type;
       }
     }
-    return ''; // fallback to browser default
+    return '';
   };
 
   const startRecording = async () => {
@@ -53,7 +49,7 @@ export default function Chat() {
 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: true,
-        video: false, // explicitly set video to false
+        video: false,
       });
 
       const mimeType = getSupportedMimeType();
@@ -70,9 +66,9 @@ export default function Chat() {
       mediaRecorder.start(100);
       mediaRecorderRef.current = mediaRecorder;
       setIsRecording(true);
+      setIsPaused(false);  // Ensure it's not paused when starting
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      // More detailed error handling
       if (error instanceof DOMException) {
         if (error.name === 'NotAllowedError') {
           toast.error(
@@ -88,6 +84,7 @@ export default function Chat() {
       }
     }
   };
+
 
   const stopRecording = () => {
     if (
@@ -109,14 +106,15 @@ export default function Chat() {
     }
 
     setIsRecording(false);
+    setIsPaused(false); // Reset paused state after stop
   };
+
 
   const handleSubmitAudio = async () => {
     if (!recordedAudio) return;
 
     setLoading(true);
     try {
-      // 1. Upload to Supabase Storage
       const fileName = `audio_${Date.now()}.webm`;
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('audios')
@@ -124,14 +122,12 @@ export default function Chat() {
 
       if (uploadError) throw uploadError;
 
-      // 2. Get public URL
       const { data: publicData } = supabase.storage
         .from('audios')
         .getPublicUrl(fileName);
 
       console.log('🚀 URL pública:', publicData.publicUrl);
 
-      // 3. Send URL to backend
       const payload: MessagePayload = {
         type: 'audio',
         content: publicData.publicUrl,
@@ -165,63 +161,88 @@ export default function Chat() {
     }
   };
 
-  return (
-    <div className='flex min-h-screen flex-col'>
-      <Card className='flex-1'>
-        <CardHeader>
-          <CardTitle className='text-2xl'>Hablános</CardTitle>
-        </CardHeader>
-        <CardContent className='space-y-4'>
-          <div className='flex flex-col items-center gap-4'>
-            <Button
-              size='lg'
-              className={`rounded-full p-8 transition-all duration-200 ${
-                isRecording && 'animate-pulse'
-              }`}
-              onClick={isRecording ? stopRecording : startRecording}
-              disabled={loading}
-            >
-              {isRecording ? (
-                <MicOff className='h-8 w-8' />
-              ) : (
-                <Mic className='h-8 w-8' />
-              )}
-            </Button>
-            {isRecording && (
-              <span className='text-sm text-gray-500'>
-                Grabando... (Click para detener)
-              </span>
-            )}
-            {recordedAudio && !isRecording && (
-              <div className='flex flex-col items-center gap-2'>
-                <span className='text-sm text-gray-500'>
-                  Audio grabado y listo para enviar
-                </span>
-                <Button
-                  onClick={handleSubmitAudio}
-                  className='bg-green-600 hover:bg-green-700'
-                  disabled={loading}
-                >
-                  {loading ? 'Enviando...' : 'Enviar Journal'}
-                </Button>
-              </div>
-            )}
-          </div>
+  const resumeRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
+      mediaRecorderRef.current.resume();  // Resumes the media recorder if paused
+      setIsPaused(false);  // Set isPaused to false as we are resuming
+      setIsRecording(true);  // Set isRecording to true
+    }
+  };
 
-          <div className='flex gap-2'>
-            <Input
-              placeholder='o también escribí acá...'
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className='flex-1'
-              disabled={loading}
-            />
-            <Button onClick={handleSendMessage} disabled={loading}>
-              Escribe
-            </Button>
+
+  const handleToggleRecording = () => {
+    if (isRecording) {
+      stopRecording(); // Stops recording if already recording
+    } else if (isPaused) {
+      resumeRecording(); // Resumes recording if it's paused
+    } else {
+      startRecording(); // Starts recording if not recording or paused
+    }
+  };
+
+  const handlePauseRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.pause();  // Pauses the recording
+      setIsPaused(true);  // Set isPaused to true
+      setIsRecording(false);  // Set isRecording to false as it's paused
+    }
+  };
+
+
+  return (
+    <div className='flex flex-col items-center fixed inset-0 z-50 bg-brandgradient'>
+      <div className="relative h-full min-h-screen w-full max-w-96 p-12 justify-between pt-24 flex items-center flex-col">
+        <h1 className="text-2xl text-center font-normal">
+          {isRecording ? 'Te escucho...' : 'Cuéntame algo'}
+        </h1>
+        <button onClick={handleToggleRecording} disabled={loading}>
+          <Ripple
+            numCircles={isRecording || isPaused ? 3 : 1}
+            mainCircleSize={164}
+            color={isPaused ? 'bg-red-500' : 'bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec]'}
+            className={isRecording || isPaused ? '' : 'animate-ripple'}
+          />
+          <div className="animate-ripple absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200">
+            {isRecording ? <MicOff /> : isPaused ? <ArrowRight /> : <Mic />}
           </div>
-        </CardContent>
-      </Card>
+        </button>
+        <div className='flex flex-col gap-3 w-full'>
+          {recordedAudio && !isRecording ? (
+            <>
+              <div className="flex gap-4 text-base font-medium items-center h-7">
+                <div className="w-full h-px bg-neutral-200" />
+                <p className="text-neutral-400 whitespace-nowrap font-normal">o también</p>
+                <div className="w-full h-px bg-neutral-200" />
+              </div>
+              <TextAreaDrawer
+                message={message}
+                setMessage={setMessage}
+                handleSendMessage={handleSendMessage}
+                disabled={loading}
+              />
+            </>
+          ) : (
+            <>
+              <Button variant="primary" className="w-full flex gap-1.5">
+                Continuar
+                <ArrowRight />
+              </Button>
+              <div className="flex gap-4 text-base font-medium items-center h-7">
+                <div className="w-full h-px bg-neutral-200" />
+                <p className="text-neutral-400 whitespace-nowrap font-normal">o también</p>
+                <div className="w-full h-px bg-neutral-200" />
+              </div>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black"
+              >
+                Seguir grabando
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
