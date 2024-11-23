@@ -18,6 +18,7 @@ const buttonVariants = cva(
           "bg-slate-100 text-slate-900 hover:bg-slate-100/80 dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-800/80",
         ghost: "hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50",
         link: "text-slate-900 underline-offset-4 hover:underline dark:text-slate-50",
+        primary: "shadow-inner text-neutral-800 shadow-[-4px_0px_8px_0px_rgba(209,218,255,0.5)_inset,_4px_0px_8px_0px_rgba(255,227,206,0.5)_inset] bg-[linear-gradient(90deg,_#FFFBFB_0%,_#FCE4CB_25%,_#FCDDFD_50%,_#D9E0FF_75%,_#F2F4FF_100%)] rounded-full hover:opacity-90 shadow-md shadow-neutral-600/10 hover:shadow-neutral-700/10 duration-300 transition-all"
       },
       size: {
         default: "h-10 px-4 py-2",

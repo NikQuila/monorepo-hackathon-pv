@@ -1,5 +1,4 @@
 import { Menu } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import {
   Sheet,
@@ -11,26 +10,26 @@ import {
 } from '../ui/sheet';
 import { useEffect, useState } from 'react';
 
-const NavLink = ({
-  href,
-  children,
-  isActive,
-}: {
-  href: string;
-  children: React.ReactNode;
-  isActive?: boolean;
-}) => (
-  <a
-    href={href}
-    className={cn(
-      'font-medium hover:underline underline-offset-4',
-      'text-sm leading-tight text-neutral-500',
-      isActive && 'text-neutral-700 underline hover:brightness-110'
-    )}
-  >
-    {children}
-  </a>
-);
+// const NavLink = ({
+//   href,
+//   children,
+//   isActive,
+// }: {
+//   href: string;
+//   children: React.ReactNode;
+//   isActive?: boolean;
+// }) => (
+//   <a
+//     href={href}
+//     className={cn(
+//       'font-medium hover:underline underline-offset-4',
+//       'text-sm leading-tight text-neutral-500',
+//       isActive && 'text-neutral-700 underline hover:brightness-110'
+//     )}
+//   >
+//     {children}
+//   </a>
+// );
 
 const DesktopNav = ({ pathname }: { pathname: string }) => (  <nav className="hidden lg:flex justify-between items-center">
     <a href="/">

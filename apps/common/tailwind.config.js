@@ -27,6 +27,7 @@ export default {
   		},
       backgroundImage: {
         brandgradient: 'linear-gradient(131deg, #FEFAF5 15.01%, #FFFAFF 50.04%, #FAFBFF 85.06%)',
+        buttongradient: 'linear-gradient(90deg,_#FFFBFB_0%,_#FCE4CB_25%,_#FCDDFD_50%,_#D9E0FF_75%,_#F2F4FF_100%)',
       },
   		keyframes: {
   			'accordion-down': {
