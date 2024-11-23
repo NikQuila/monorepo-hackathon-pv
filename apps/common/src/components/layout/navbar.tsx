@@ -1,4 +1,4 @@
-import { Menu, X } from 'lucide-react';
+import { Menu } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '../ui/button';
 import {
@@ -11,7 +11,15 @@ import {
 } from '../ui/sheet';
 import { useEffect, useState } from 'react';
 
-const NavLink = ({ href, children, isActive }: { href: string; children: React.ReactNode; isActive?: boolean }) => (
+const NavLink = ({
+  href,
+  children,
+  isActive,
+}: {
+  href: string;
+  children: React.ReactNode;
+  isActive?: boolean;
+}) => (
   <a
     href={href}
     className={cn(
@@ -24,10 +32,7 @@ const NavLink = ({ href, children, isActive }: { href: string; children: React.R
   </a>
 );
 
-
-
-const DesktopNav = ({ pathname }: { pathname: string }) => (
-  <nav className="hidden lg:flex justify-between items-center">
+const DesktopNav = ({ pathname }: { pathname: string }) => (  <nav className="hidden lg:flex justify-between items-center">
     <a href="/">
       <img
         src="/logo.svg"
@@ -40,7 +45,11 @@ const DesktopNav = ({ pathname }: { pathname: string }) => (
 
     {/* <div className="w-full flex items-center gap-6">
       {navItems.map((item) => (
-        <NavLink key={item.href} href={item.href} isActive={pathname === item.href}>
+        <NavLink
+          key={item.href}
+          href={item.href}
+          isActive={pathname === item.href}
+        >
           {item.label}
         </NavLink>
       ))}
@@ -54,20 +63,22 @@ const DesktopNav = ({ pathname }: { pathname: string }) => (
   </nav>
 );
 
-
 const MobileNav = ({ pathname }: { pathname: string }) => (
-  <div className="block lg:hidden">
-    <div className="flex items-center justify-between gap-4">
+  <div className='block lg:hidden'>
+    <div className='flex items-center justify-between gap-4'>
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon">
+          <Button variant='ghost' size='icon'>
             <Menu size={24} />
           </Button>
         </SheetTrigger>
-        <SheetContent side="left" className="*:p-4 overflow-y-auto h-svh [&_.close]:hidden">
-          <SheetHeader className="!p-2">
-            <SheetTitle className="top-0 h-20 w-full justify-between gap-4 flex flex-row items-center">
-              <a href="/">
+        <SheetContent
+          side='left'
+          className='*:p-4 overflow-y-auto h-svh [&_.close]:hidden'
+        >
+          <SheetHeader className='!p-2'>
+            <SheetTitle className='top-0 h-20 w-full justify-between gap-4 flex flex-row items-center'>
+              <a href='/'>
                 <img
                   src="/logo.svg"
                   className="object-cover h-10 w-auto"
@@ -90,7 +101,7 @@ const MobileNav = ({ pathname }: { pathname: string }) => (
         </SheetContent>
       </Sheet>
 
-      <a href="/">
+      <a href='/'>
         <img
           src="/logo.svg"
           className="object-cover h-10 w-auto"
@@ -108,7 +119,6 @@ const MobileNav = ({ pathname }: { pathname: string }) => (
     </div>
   </div>
 );
-
 
 const Navbar = () => {
   const [pathname, setPathname] = useState(window.location.pathname);
