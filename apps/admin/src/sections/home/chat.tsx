@@ -267,7 +267,7 @@ export default function Chat() {
                   className={cn(
                     'absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200',
                     isRecording
-                      ? 'animate-ripple -mt-10'
+                      ? 'animate-ripple -mt-20'
                       : 'text-white top-0 left-0 -mt-16'
                   )}
                 >
@@ -279,23 +279,25 @@ export default function Chat() {
             <div className='z-20 flex flex-col gap-3 w-full'>
               {!recordedAudio && !isRecording ? (
                 <>
-                  <div className='flex gap-4 text-base font-medium items-center h-7'>
-                    <div className='w-full h-px bg-neutral-200' />
-                    <p className='text-neutral-400 whitespace-nowrap font-normal'>
-                      o también
-                    </p>
-                    <div className='w-full h-px bg-neutral-200' />
+                  <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
+                    <div className='flex gap-4 text-base font-medium items-center h-7'>
+                      <div className='w-full h-px bg-neutral-200' />
+                      <p className='text-neutral-400 whitespace-nowrap font-normal'>
+                        o también
+                      </p>
+                      <div className='w-full h-px bg-neutral-200' />
+                    </div>
+                    <TextAreaDrawer
+                      message={message}
+                      setMessage={setMessage}
+                      handleSendMessage={handleSendMessage}
+                      disabled={loading}
+                    />
                   </div>
-                  <TextAreaDrawer
-                    message={message}
-                    setMessage={setMessage}
-                    handleSendMessage={handleSendMessage}
-                    disabled={loading}
-                  />
                 </>
               ) : (
                 <>
-                  <div className='w-full fixed bottom-10 space-y-2 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
+                  <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
                     <Button
                       onClick={handleSubmitAudio}
                       variant='primary'
