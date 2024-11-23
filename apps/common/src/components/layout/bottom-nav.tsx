@@ -13,7 +13,7 @@ export function BottomNav() {
   const middleIndex = Math.ceil(navItems.length / 2);
 
   return (
-    <nav className='fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200'>
+    <nav className='fixed z-50 bottom-0 left-0 right-0 bg-white border-t border-gray-200'>
       <ul className='relative flex px-8 pb-3 justify-around'>
         {navItems.map((item, index) => {
           const isActive = location === item.href;

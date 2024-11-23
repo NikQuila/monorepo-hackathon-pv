@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 import { Card, CardContent } from '@common/components/ui/card';
 import { useState } from 'react';
+import { ScrollArea } from '@common/components/ui/scroll-area';
 
 const mockEntries: Record<string, string> = {
   '2024-11-22': `Hoy fue uno de esos días en los que el tiempo parece moverse con calma, pero a la vez logré hacer más de lo que esperaba. Me desperté temprano y aproveché la mañana para trabajar en un proyecto personal que he estado postergando.
@@ -45,70 +46,67 @@ const JournalPage = () => {
     mockEntries[formattedDate] || 'No hay entrada para este día.';
 
   return (
-    <div className='max-w-2xl mx-auto p-4 space-y-6'>
-      {/* Week Calendar Strip */}
-      <div className='flex justify-between items-center bg-slate-50 p-4 rounded-xl'>
-        {weekDays.map((day, index) => (
-          <button
-            key={index}
-            onClick={() => handleDayClick(day)}
-            className={`flex flex-col items-center justify-center w-14 h-14 rounded-full transition-colors ${
-              day.hasSame(selectedDate, 'day')
-                ? 'bg-black text-white'
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            <span className='text-xs font-medium'>{getDayInitial(day)}</span>
-            <span className='text-lg'>{getDate(day)}</span>
-          </button>
-        ))}
+    <div className='max-w-96 mx-auto'>
+      <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
+        <div className="w-full flex justify-between px-3">
+          {weekDays.map((day, index) => (
+            <div className="w-8 flex flex-col gap-1.5 items-center">
+              <span className='text-[10px] font-bold'>{getDayInitial(day)}</span>
+              <button
+                key={index}
+                onClick={() => handleDayClick(day)}
+                className={`flex flex-col gap-1.5 items-center justify-center size-7 rounded-full transition-colors ${
+                  day.hasSame(selectedDate, 'day')
+                    ? 'bg-neutral-900 text-white'
+                    : 'text-neutral-400'
+                }`}
+              >
+                <span className='text-sm font-bold'>{getDate(day)}</span>
+              </button>
+            </div>
+          ))}
+        </div>
+        <div className='text-xs font-medium text-neutral-400'>
+          {selectedDate
+            .toLocaleString(
+              {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              },
+              { locale: 'es' }
+            )
+            .toUpperCase()}
+        </div>
       </div>
 
-      {/* Journal Entry Area */}
-      {/* Journal Entry Area */}
-      <Card className='bg-white shadow-sm'>
-        <CardContent className='p-6'>
-          <div className='space-y-6'>
-            <div className='text-sm text-gray-500'>
-              {selectedDate
-                .toLocaleString(
-                  {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  },
-                  { locale: 'es' }
-                )
-                .toUpperCase()}
+      <ScrollArea className='bg-white px-3 pt-6 pb-40'>
+        <div className='space-y-6'>
+          <div className='relative'>
+            <div className="bg-gradient-to-t from-white to-transparent w-screen h-24 fixed bottom-20 inset-x-0 z-10" />
+            <div
+              className='absolute inset-0 flex flex-col -mt-0.5'
+            >
+              {Array(16)
+                .fill(null)
+                .map((_, i) => (
+                  <div
+                    key={i}
+                    className='border-b border-slate-200/60'
+                    style={{ height: '2rem' }}
+                  />
+                ))}
             </div>
-            <div className='relative'>
-              {/* Líneas de fondo */}
-              <div
-                className='absolute inset-0 flex flex-col'
-                style={{ marginTop: '1.5rem' }}
-              >
-                {Array(15)
-                  .fill(null)
-                  .map((_, i) => (
-                    <div
-                      key={i}
-                      className='border-b border-slate-100'
-                      style={{ height: '2rem' }}
-                    />
-                  ))}
-              </div>
-              {/* Contenido */}
-              <div
-                className='relative whitespace-pre-wrap text-gray-700 leading-8'
-                style={{ minHeight: '30rem' }}
-              >
-                {entryContent}
-              </div>
+            <div
+              className='relative whitespace-pre-wrap text-neutral-700 leading-8'
+              style={{ minHeight: '30rem' }}
+            >
+              {entryContent}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </ScrollArea>
     </div>
   );
 };
