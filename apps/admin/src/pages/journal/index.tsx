@@ -1,22 +1,27 @@
 import { DateTime } from 'luxon';
 import { Card, CardContent } from '@common/components/ui/card';
-import { useState } from 'react';
-
-const mockEntries: Record<string, string> = {
-  '2024-11-22': `Hoy fue uno de esos días en los que el tiempo parece moverse con calma, pero a la vez logré hacer más de lo que esperaba. Me desperté temprano y aproveché la mañana para trabajar en un proyecto personal que he estado postergando.
-
-Es increíble cómo, cuando me siento inspirado, las ideas fluyen casi sin esfuerzo. Dedicarle ese tiempo fue realmente gratificante.
-
-Por la tarde, salí a dar un paseo. El aire fresco y la tranquilidad del entorno me ayudaron a despejar la mente. Hay algo especial en caminar sin rumbo fijo, dejando que los pensamientos vayan y vengan sin presión.`,
-  '2024-11-21':
-    'Un día productivo en la oficina. Completé varios pendientes importantes.',
-  '2024-11-20':
-    'Cena familiar. Fue agradable reconectarnos después de tanto tiempo.',
-};
+import { Skeleton } from '@common/components/ui/skeleton';
+import { useEffect, useState } from 'react';
+import { fetchJournalEntries } from '@common/api/journals';
 
 const JournalPage = () => {
   const today = DateTime.now();
   const [selectedDate, setSelectedDate] = useState(today);
+  const [entries, setEntries] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadEntries = async () => {
+      setLoading(true);
+      const startDate = today.minus({ days: 3 });
+      const endDate = today.plus({ days: 3 });
+      const data = await fetchJournalEntries(startDate, endDate);
+      setEntries(data);
+      setLoading(false);
+    };
+
+    loadEntries();
+  }, [today]);
 
   const getDayInitial = (date: DateTime) =>
     date
@@ -42,10 +47,10 @@ const JournalPage = () => {
 
   const formattedDate = selectedDate.toFormat('yyyy-MM-dd');
   const entryContent =
-    mockEntries[formattedDate] || 'No hay entrada para este día.';
+    entries[formattedDate] || 'No hay entrada para este día.';
 
   return (
-    <div className='max-w-2xl mx-auto p-4 space-y-6'>
+    <div className='max-w-2xl mx-auto p-4 space-y-6 pb-20'>
       {/* Week Calendar Strip */}
       <div className='flex justify-between items-center bg-slate-50 p-4 rounded-xl'>
         {weekDays.map((day, index) => (
@@ -64,7 +69,6 @@ const JournalPage = () => {
         ))}
       </div>
 
-      {/* Journal Entry Area */}
       {/* Journal Entry Area */}
       <Card className='bg-white shadow-sm'>
         <CardContent className='p-6'>
