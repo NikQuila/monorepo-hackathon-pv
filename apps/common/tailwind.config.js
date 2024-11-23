@@ -25,6 +25,9 @@ export default {
   				ring: 'hsl(var(--sidebar-ring))'
   			}
   		},
+      backgroundImage: {
+        brandgradient: 'linear-gradient(131deg, #FEFAF5 15.01%, #FFFAFF 50.04%, #FAFBFF 85.06%)',
+      },
   		keyframes: {
   			'accordion-down': {
   				from: {
