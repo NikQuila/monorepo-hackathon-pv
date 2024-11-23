@@ -1,9 +1,9 @@
 import { Link, useLocation } from 'wouter';
-import { Home, Search, Bell, User } from 'lucide-react';
+import { Home, Search, Bell, User, Book } from 'lucide-react';
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/' },
-  { icon: Search, label: 'Search', href: '/search' },
+  { icon: Book, label: 'Journal', href: '/journal' },
   { icon: Bell, label: 'Notifications', href: '/notifications' },
   { icon: User, label: 'Profile', href: '/profile' },
 ];
