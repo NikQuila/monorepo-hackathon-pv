@@ -91,14 +91,9 @@ export default function Chat() {
       if (uploadError) throw uploadError;
 
       // 2. Get public URL
-      const { data: publicData, error: publicUrlError } = supabase.storage
+      const { data: publicData } = supabase.storage
         .from('audios')
         .getPublicUrl(fileName);
-
-      if (publicUrlError) {
-        console.error('Error getting public URL:', publicUrlError);
-        throw publicUrlError;
-      }
 
       console.log('🚀 URL pública:', publicData.publicUrl);
 
