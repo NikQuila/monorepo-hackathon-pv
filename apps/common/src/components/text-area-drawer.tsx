@@ -53,7 +53,7 @@ export function TextAreaDrawer({
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               disabled={disabled}
-              className='min-h-[90svh]'
+              className='min-h-[70svh]'
             />
           </div>
           <Button disabled={disabled} className='w-full' type='submit'>
