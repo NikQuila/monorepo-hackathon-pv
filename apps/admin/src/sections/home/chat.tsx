@@ -29,14 +29,36 @@ export default function Chat() {
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
+  const getSupportedMimeType = () => {
+    const types = [
+      'audio/webm',
+      'audio/mp4',
+      'audio/aac',
+      'audio/wav',
+      'audio/ogg',
+    ];
+
+    for (const type of types) {
+      if (MediaRecorder.isTypeSupported(type)) {
+        return type;
+      }
+    }
+    return ''; // fallback to browser default
+  };
+
   const startRecording = async () => {
     try {
       setAudioChunks([]);
       setRecordedAudio(null);
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false, // explicitly set video to false
+      });
+
+      const mimeType = getSupportedMimeType();
       const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus',
+        mimeType: mimeType || undefined,
       });
 
       mediaRecorder.ondataavailable = (event) => {
@@ -45,13 +67,25 @@ export default function Chat() {
         }
       };
 
-      // Configurar para que genere chunks cada 100ms
       mediaRecorder.start(100);
       mediaRecorderRef.current = mediaRecorder;
       setIsRecording(true);
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      toast.error('Error al acceder al micrófono');
+      // More detailed error handling
+      if (error instanceof DOMException) {
+        if (error.name === 'NotAllowedError') {
+          toast.error(
+            'Por favor permite el acceso al micrófono para grabar audio'
+          );
+        } else if (error.name === 'NotFoundError') {
+          toast.error('No se encontró ningún micrófono en el dispositivo');
+        } else {
+          toast.error(`Error al acceder al micrófono: ${error.message}`);
+        }
+      } else {
+        toast.error('Error inesperado al acceder al micrófono');
+      }
     }
   };
 
@@ -62,11 +96,11 @@ export default function Chat() {
     ) {
       mediaRecorderRef.current.stop();
 
-      // Esperar a que se procesen todos los chunks
       mediaRecorderRef.current.onstop = () => {
-        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const mimeType = mediaRecorderRef.current?.mimeType || 'audio/wav';
+        const audioBlob = new Blob(audioChunks, { type: mimeType });
         setRecordedAudio(audioBlob);
-        setAudioChunks([]); // Limpiar los chunks después de crear el blob
+        setAudioChunks([]);
       };
 
       mediaRecorderRef.current.stream
