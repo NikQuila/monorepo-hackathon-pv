@@ -23,7 +23,7 @@ const JournalPage = () => {
     };
 
     loadEntries();
-  }, [today]);
+  }, []);
 
   const getDayInitial = (date: DateTime) =>
     date

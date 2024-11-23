@@ -42,7 +42,7 @@ const ProfilePage = () => {
     },
     yaxis: {
       labels: {
-        formatter: (value) => `${value}%`,
+        formatter: (value: number) => `${value}%`,
       },
     },
   };
@@ -149,7 +149,7 @@ const ProfilePage = () => {
             </Button>
           </div>
 
-          <div className='grid md:grid-cols-2 gap-8'>
+          {/* <div className='grid md:grid-cols-2 gap-8'>
             <Card>
               <CardHeader>
                 <CardTitle>Este mes</CardTitle>
@@ -177,7 +177,7 @@ const ProfilePage = () => {
                 />
               </CardContent>
             </Card>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

@@ -114,7 +114,7 @@ export default function Onboarding() {
         return (
           <BlurFade delay={0.5} inView>
             <Input
-              id="name"
+              id='name'
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="text-lg bg-neutral-200/40 border-0"
@@ -126,13 +126,13 @@ export default function Onboarding() {
         );
       case 'age':
         return (
-          <div className="space-y-2">
+          <div className='space-y-2'>
             {ageOptions.map((option, index) => (
               <BlurFade key={index} delay={index * 0.25} inView>
                 <Button
                   onClick={() => setAge(option.value)}
                   variant={age === option.value ? 'primary' : 'outline'}
-                  className="w-full justify-start text-center h-[50px] py-3 rounded shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]"
+                  className='w-full justify-start text-center h-[50px] py-3 rounded shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
                 >
                   {option.label}
                 </Button>
@@ -142,13 +142,13 @@ export default function Onboarding() {
         );
       case 'job':
         return (
-          <div className="space-y-2">
+          <div className='space-y-2'>
             {jobOptions.map((option, index) => (
               <BlurFade key={index} delay={index * 0.25} inView>
                 <Button
                   onClick={() => setJob(option.value)}
                   variant={job === option.value ? 'primary' : 'outline'}
-                  className="w-full justify-start text-center h-[50px] py-3 rounded shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]"
+                  className='w-full justify-start text-center h-[50px] py-3 rounded shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
                 >
                   {option.label}
                 </Button>
@@ -158,14 +158,21 @@ export default function Onboarding() {
         );
       case 'ready':
         return (
-          <div className="-mt-12 text-base text-center flex flex-col gap-3">
-            <div className="mb-3 flex text-5xl aspect-square rounded-full size-20 mx-auto items-center justify-center bg-[#E2E8FF]">
+          <div className='-mt-12 text-base text-center flex flex-col gap-3'>
+            <div className='mb-3 flex text-5xl aspect-square rounded-full size-20 mx-auto items-center justify-center bg-[#E2E8FF]'>
               📖
             </div>
-            <h5 className="text-2xl font-medium text-neutral-800">Todo listo?</h5>
-            <p className="text-base tracking-tight text-neutral-400 font-normal">Empezaremos creando tu primera entrada al diario.</p>
-            <p className="text-base tracking-tight text-neutral-400 font-normal">
-              No te sobrepienses, <span className="underline text-neutral-800">cualquier cosa sirve.</span>
+            <h5 className='text-2xl font-medium text-neutral-800'>
+              Todo listo?
+            </h5>
+            <p className='text-base tracking-tight text-neutral-400 font-normal'>
+              Empezaremos creando tu primera entrada al diario.
+            </p>
+            <p className='text-base tracking-tight text-neutral-400 font-normal'>
+              No te sobrepienses,{' '}
+              <span className='underline text-neutral-800'>
+                cualquier cosa sirve.
+              </span>
             </p>
           </div>
         );
@@ -187,43 +194,36 @@ export default function Onboarding() {
         <BlurFade delay={0.25}>
           {currentStep === 'welcome' && 'Hola, Soy Journie'}
         </BlurFade>
-        <BlurFade
-          delay={3.25}
-          inView
-        >
+        <BlurFade delay={3.25} inView>
           {currentStep === 'name' && '¿Cuál es tu nombre?'}
         </BlurFade>
-        <BlurFade
-          delay={3.5}
-          inView
-        >
+        <BlurFade delay={3.5} inView>
           {currentStep === 'age' && '¿Qué edad tienes?'}
         </BlurFade>
-        <BlurFade
-          delay={3.75}
-          inView
-        >
+        <BlurFade delay={3.75} inView>
           {currentStep === 'job' && '¿Qué ocupación tienes?'}
         </BlurFade>
-        <BlurFade delay={0.5} className="text-2xl text-neutral-800" inView>
+        <BlurFade delay={0.5} className='text-2xl text-neutral-800' inView>
           {currentStep === 'ready' && <></>}
         </BlurFade>
-        <div className="space-y-4">
+        <div className='space-y-4'>
           <BlurFade delay={0.25} inView>
             {renderStepContent()}
           </BlurFade>
 
-          {error && (
-            <p className="text-center text-sm text-red-500">{error}</p>
-          )}
+          {error && <p className='text-center text-sm text-red-500'>{error}</p>}
         </div>
       </div>
       {currentStep !== 'welcome' && (
-        <BlurFade delay={0.5} className="w-full max-w-md mx-auto" inView>
+        <BlurFade
+          delay={0.5}
+          className='w-full fixed bottom-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'
+          inView
+        >
           <Button
             onClick={handleContinue}
-            variant="primary"
-            className="w-full"
+            variant='primary'
+            className='w-full'
             disabled={loading}
           >
             {loading ? 'Actualizando...' : 'Continuar'}
