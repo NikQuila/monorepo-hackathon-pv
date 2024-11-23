@@ -47,12 +47,12 @@ export default function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const getSupportedMimeType = () => {
+    // Prioritize formats that work well with OpenAI
     const types = [
-      'audio/webm',
+      'audio/webm', // Most compatible
       'audio/mp4',
-      'audio/aac',
-      'audio/wav',
       'audio/ogg',
+      'audio/wav',
     ];
 
     for (const type of types) {
@@ -60,7 +60,13 @@ export default function Chat() {
         return type;
       }
     }
-    return '';
+
+    // Fallback to mp4 for iOS
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      return 'audio/mp4';
+    }
+
+    return 'audio/webm'; // Default fallback
   };
 
   const startRecording = async () => {
@@ -142,12 +148,22 @@ export default function Chat() {
 
   const handleSubmitAudio = async (event: React.FormEvent) => {
     event.preventDefault();
-
     if (!recordedAudio) return;
 
     setLoading(true);
     try {
-      const fileName = `audio_${Date.now()}.webm`;
+      // Determine if we need to convert the format
+      const currentFormat = recordedAudio.type;
+      let finalAudio = recordedAudio;
+      let extension = 'webm';
+
+      // For iOS devices, ensure we're using a compatible format
+      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+        extension = 'm4a';
+      }
+
+      const fileName = `audio_${Date.now()}.${extension}`;
+
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('audios')
         .upload(fileName, recordedAudio);
