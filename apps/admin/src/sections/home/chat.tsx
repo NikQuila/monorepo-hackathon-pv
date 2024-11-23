@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
-
+import { useLocation } from 'wouter';
 import { Mic, MicOff } from 'lucide-react';
+import { toast } from 'react-toastify';
 import {
   Card,
   CardContent,
@@ -17,9 +18,12 @@ type MessagePayload = {
 };
 
 export default function Chat() {
+  const [, setLocation] = useLocation();
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+  const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
@@ -39,6 +43,7 @@ export default function Chat() {
       setIsRecording(true);
     } catch (error) {
       console.error('Error accessing microphone:', error);
+      toast.error('Error al acceder al micrófono');
     }
   };
 
@@ -50,14 +55,7 @@ export default function Chat() {
       mediaRecorderRef.current.stop();
 
       const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-
-      const payload: MessagePayload = {
-        type: 'audio',
-        content: audioBlob,
-        timestamp: Date.now(),
-      };
-
-      console.log('Sending audio payload:', payload);
+      setRecordedAudio(audioBlob);
       setAudioChunks([]);
 
       mediaRecorderRef.current.stream
@@ -66,6 +64,30 @@ export default function Chat() {
     }
 
     setIsRecording(false);
+  };
+
+  const handleSubmitAudio = async () => {
+    if (!recordedAudio) return;
+
+    setLoading(true);
+    try {
+      const payload: MessagePayload = {
+        type: 'audio',
+        content: recordedAudio,
+        timestamp: Date.now(),
+      };
+
+      console.log('Sending audio payload:', payload);
+      // Here you would typically send the audio to your backend
+
+      toast.success('¡Gracias por subir tu journal!');
+    } catch (error) {
+      console.error('Error submitting audio:', error);
+      toast.error('Error al enviar el audio');
+    } finally {
+      setLoading(false);
+      setRecordedAudio(null);
+    }
   };
 
   const handleSendMessage = () => {
@@ -95,6 +117,7 @@ export default function Chat() {
                 isRecording && 'animate-pulse'
               }`}
               onClick={isRecording ? stopRecording : startRecording}
+              disabled={loading}
             >
               {isRecording ? (
                 <MicOff className='h-8 w-8' />
@@ -107,6 +130,20 @@ export default function Chat() {
                 Grabando... (Click para detener)
               </span>
             )}
+            {recordedAudio && !isRecording && (
+              <div className='flex flex-col items-center gap-2'>
+                <span className='text-sm text-gray-500'>
+                  Audio grabado y listo para enviar
+                </span>
+                <Button
+                  onClick={handleSubmitAudio}
+                  className='bg-green-600 hover:bg-green-700'
+                  disabled={loading}
+                >
+                  {loading ? 'Enviando...' : 'Enviar Journal'}
+                </Button>
+              </div>
+            )}
           </div>
 
           <div className='flex gap-2'>
@@ -115,8 +152,11 @@ export default function Chat() {
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className='flex-1'
+              disabled={loading}
             />
-            <Button onClick={handleSendMessage}>Escribe</Button>
+            <Button onClick={handleSendMessage} disabled={loading}>
+              Escribe
+            </Button>
           </div>
         </CardContent>
       </Card>
