@@ -9,13 +9,20 @@ import {
 } from '@common/components/ui/card';
 import { Mic, MicOff } from 'lucide-react';
 
+declare global {
+  interface Window {
+    SpeechRecognition: any;
+    webkitSpeechRecognition: any;
+  }
+}
+
 export default function Chat() {
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
 
   // Referencias para manejar la grabación
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const startRecording = async () => {
@@ -23,15 +30,15 @@ export default function Chat() {
       // Solicitar permisos de micrófono
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
-      // Configurar el reconocimiento de voz
       const SpeechRecognition =
         window.SpeechRecognition || window.webkitSpeechRecognition;
+
       const recognition = new SpeechRecognition();
       recognition.continuous = true;
       recognition.interimResults = true;
       recognition.lang = 'es-ES';
 
-      recognition.onresult = (event) => {
+      recognition.onresult = (event: any) => {
         const current = event.resultIndex;
         const result = event.results[current];
         const transcriptText = result[0].transcript;

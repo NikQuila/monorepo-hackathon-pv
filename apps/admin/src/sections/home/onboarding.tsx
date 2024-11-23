@@ -10,11 +10,8 @@ import {
 import { updateUserProfile } from '@common/api/users';
 import { toast } from 'react-toastify';
 import useUserStore from '@/store/useUserStore';
-interface OnboardingProps {
-  onComplete: (name: string) => void;
-}
 
-export default function Onboarding({ onComplete }: OnboardingProps) {
+export default function Onboarding() {
   const { userProfile, refreshUserProfile } = useUserStore();
   const [name, setName] = useState('');
   const [age, setAge] = useState('');
@@ -35,7 +32,10 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
     setLoading(true);
     setError('');
-    const res = await updateUserProfile(userProfile?.id, { name, age });
+    const res = await updateUserProfile(userProfile?.id as string, {
+      name,
+      age,
+    });
     if (res) {
       refreshUserProfile();
       toast.success('Perfil actualizado');
