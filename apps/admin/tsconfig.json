@@ -13,7 +13,11 @@
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "allowImportingTsExtensions": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "noEmit": true
   },
   "include": ["src/**/*", "../common/src/**/*"]
 }
