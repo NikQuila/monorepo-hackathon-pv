@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowRight, Mic, MicOff } from 'lucide-react';
+import { ArrowRight, Mic, MicOff, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@common/components/ui/button';
 import { sendJournalFastResponse, sendMessageOrAudio } from '@common/api/chat';
@@ -226,7 +226,6 @@ export default function Chat() {
 
   return (
     <div className='flex flex-col items-center fixed inset-0 z-50 bg-brandgradient'>
-      {/* Fast Response UI */}
       {fastResponse ? (
         <div className='w-full animate-fade-in'>
           <FastResponseUI response={fastResponse} />
@@ -238,7 +237,7 @@ export default function Chat() {
               {isRecording
                 ? 'Te escucho...'
                 : recordedAudio
-                ? 'Audio listo para enviar'
+                ? 'Todo listo!'
                 : 'Cuéntame algo'}
             </h1>
             <div className='flex flex-col items-center gap-4'>
@@ -253,7 +252,7 @@ export default function Chat() {
                 <Ripple
                   numCircles={isRecording ? 3 : 1}
                   mainCircleSize={164}
-                  mainCircleOpacity={!isRecording ? 1 : 0.24}
+                  mainCircleOpacity={!isRecording ? 1 : 0.8}
                   color={
                     recordedAudio
                       ? 'bg-green-500'
@@ -320,11 +319,11 @@ export default function Chat() {
                         onClick={() => {
                           setRecordedAudio(null);
                           setAudioChunks([]);
-                          setFastResponse(null); // Clear fast response when re-recording
+                          setFastResponse(null);
                         }}
                         className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black'
                       >
-                        Grabar Denuevo
+                        Grabar denuevo
                       </Button>
                     </>
                   )}
@@ -338,47 +337,72 @@ export default function Chat() {
   );
 }
 
+const getPastelColorFromEmoji = (emoji: string): string => {
+  let hash = 0;
+  for (let i = 0; i < emoji.length; i++) {
+    hash = emoji.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  const pastelColor = (hash: number) => {
+    const r = (hash >> 16) & 0xff;
+    const g = (hash >> 8) & 0xff;
+    const b = hash & 0xff;
+
+    return `rgb(${(r + 200) % 256}, ${(g + 200) % 256}, ${(b + 200) % 256}, 0.35)`;
+  };
+
+  return pastelColor(hash);
+};
+
+
 const FastResponseUI = ({ response }: { response: FastResponse }) => {
   const [, setLocation] = useLocation();
-  return (
-    <Card className='w-full mb-6'>
-      <CardHeader>
-        <div className='flex items-center gap-4'>
-          <div className='text-4xl'>{response.mood_emoji}</div>
-          <CardTitle>{response.title}</CardTitle>
-        </div>
-      </CardHeader>
-      <CardContent className='space-y-6'>
-        <p className='text-gray-600'>{response.description}</p>
 
-        {response.insights.length > 0 && (
-          <div className='space-y-4'>
-            <h3 className='font-semibold'>Insights:</h3>
-            <div className='grid gap-3'>
-              {response.insights.map((insight, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    'flex items-center justify-between p-3 rounded-lg',
-                    insight.type === 'positive' ? 'bg-green-50' : 'bg-red-50'
-                  )}
-                >
-                  <span
-                    className={cn(
-                      insight.type === 'positive'
-                        ? 'text-green-700'
-                        : 'text-red-700'
-                    )}
-                  >
-                    {insight.text}
-                  </span>
-                </div>
-              ))}
-            </div>
+  const pastelColor = getPastelColorFromEmoji(response.mood_emoji);
+
+  return (
+    <div className="pt-24 px-8 pb-12 max-w-md mx-auto text-base text-center flex flex-col gap-8 justify-between h-full min-h-svh">
+      <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-">
+          <div
+            className="mb-3 flex text-5xl aspect-square rounded-full size-20 mx-auto items-center justify-center"
+            style={{ backgroundColor: pastelColor }}
+          >
+            {response.mood_emoji}
           </div>
-        )}
-        <Button onClick={() => setLocation('/profile')}>Finalizar</Button>
-      </CardContent>
-    </Card>
+          <h5 className="mt-2 text-2xl font-medium text-neutral-800">{response.title}</h5>
+          <p className="mt-2 text-base tracking-tight text-neutral-400 font-normal">{response.description}</p>
+        </div>
+        <div className="flex flex-col gap-2">
+          {response.insights.map((insight, index) => (
+            <div
+              key={index}
+              className={cn(
+                'flex items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
+                insight.type === 'positive' ? 'bg-green-100 border-green-200' : 'bg-red-100 border-red-200',
+                "shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]"
+              )}
+            >
+              <div className={cn(
+                "size-10 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square",
+                insight.type === 'positive' ? 'bg-green-200 text-green-600' : 'bg-red-200 text-red-600'
+              )}>
+                {insight.type === 'positive' ? (
+                  <ThumbsUp />
+                ):(
+                  <ThumbsDown />
+                )}
+              </div>
+              <span className="text-neutral-800" >
+                {insight.text}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <Button onClick={() => setLocation('/profile')} variant='primary' className='mt-3'>
+        Ver resultados
+      </Button>
+    </div>
   );
 };
