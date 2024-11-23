@@ -20,7 +20,7 @@ const Ripple = React.memo(function Ripple({
   return (
     <div
       className={cn(
-        "pointer-events-none select-none relative inset-0",
+        "pointer-events-none select-none absolute inset-0 -mt-24",
       )}
     >
       {Array.from({ length: numCircles }, (_, i) => {
@@ -33,7 +33,7 @@ const Ripple = React.memo(function Ripple({
         return (
           <div
             key={i}
-            className={`absolute ${className} rounded-full ${color} hover:opacity-90 -z-20 border [--i:${i}]`}
+            className={`absolute ${className} rounded-full ${color} aspect-square w-auto hover:opacity-90 -z-20 border [--i:${i}]`}
             style={
               {
                 width: `${size}px`,

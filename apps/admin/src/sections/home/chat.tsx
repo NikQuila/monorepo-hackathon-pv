@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { ArrowRight, Mic, MicOff } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -7,6 +7,7 @@ import { sendMessageOrAudio } from '@common/api/chat';
 import { supabase } from '@common/supabase';
 import Ripple from '@common/components/ui/ripple';
 import { TextAreaDrawer } from '@common/components/text-area-drawer';
+import { cn } from '@/lib/utils';
 
 type MessagePayload = {
   type: 'text' | 'audio';
@@ -66,7 +67,7 @@ export default function Chat() {
       mediaRecorder.start(100);
       mediaRecorderRef.current = mediaRecorder;
       setIsRecording(true);
-      setIsPaused(false);  // Ensure it's not paused when starting
+      setIsPaused(false);
     } catch (error) {
       console.error('Error accessing microphone:', error);
       if (error instanceof DOMException) {
@@ -84,7 +85,6 @@ export default function Chat() {
       }
     }
   };
-
 
   const stopRecording = () => {
     if (
@@ -106,9 +106,16 @@ export default function Chat() {
     }
 
     setIsRecording(false);
-    setIsPaused(false); // Reset paused state after stop
+    setIsPaused(false);
   };
 
+  const resumeRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
+      mediaRecorderRef.current.resume();
+      setIsPaused(false);
+      setIsRecording(true);
+    }
+  };
 
   const handleSubmitAudio = async () => {
     if (!recordedAudio) return;
@@ -161,49 +168,36 @@ export default function Chat() {
     }
   };
 
-  const resumeRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'paused') {
-      mediaRecorderRef.current.resume();  // Resumes the media recorder if paused
-      setIsPaused(false);  // Set isPaused to false as we are resuming
-      setIsRecording(true);  // Set isRecording to true
-    }
-  };
-
-
   const handleToggleRecording = () => {
     if (isRecording) {
-      stopRecording(); // Stops recording if already recording
+      stopRecording();
     } else if (isPaused) {
-      resumeRecording(); // Resumes recording if it's paused
+      resumeRecording();
     } else {
-      startRecording(); // Starts recording if not recording or paused
-    }
-  };
-
-  const handlePauseRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.pause();  // Pauses the recording
-      setIsPaused(true);  // Set isPaused to true
-      setIsRecording(false);  // Set isRecording to false as it's paused
+      startRecording();
     }
   };
 
 
   return (
     <div className='flex flex-col items-center fixed inset-0 z-50 bg-brandgradient'>
-      <div className="relative h-full min-h-screen w-full max-w-96 p-12 justify-between pt-24 flex items-center flex-col">
+      <div className="relative h-full min-h-screen w-full max-w-96 p-12 justify-between flex items-center flex-col">
         <h1 className="text-2xl text-center font-normal">
           {isRecording ? 'Te escucho...' : 'Cuéntame algo'}
         </h1>
         <button onClick={handleToggleRecording} disabled={loading}>
           <Ripple
-            numCircles={isRecording || isPaused ? 3 : 1}
+            numCircles={isRecording ? 3 : 1}
             mainCircleSize={164}
-            color={isPaused ? 'bg-red-500' : 'bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec]'}
-            className={isRecording || isPaused ? '' : 'animate-ripple'}
+            mainCircleOpacity={!isRecording ? 1 : 0.24}
+            color={!isRecording ? 'bg-red-500' : 'bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec]'}
+            className={isRecording ? 'animate-ripple' : ''}
           />
-          <div className="animate-ripple absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200">
-            {isRecording ? <MicOff /> : isPaused ? <ArrowRight /> : <Mic />}
+          <div className={cn(
+            "absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200",
+            isRecording ? "animate-ripple" : "text-white top-0 left-0 -mt-12"
+          )}>
+            {isRecording ? <Mic /> : <MicOff />}
           </div>
         </button>
         <div className='flex flex-col gap-3 w-full'>
@@ -223,7 +217,11 @@ export default function Chat() {
             </>
           ) : (
             <>
-              <Button variant="primary" className="w-full flex gap-1.5">
+              <Button
+                onClick={handleSubmitAudio}
+                variant="primary"
+                className="w-full flex gap-1.5"
+              >
                 Continuar
                 <ArrowRight />
               </Button>
