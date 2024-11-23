@@ -251,7 +251,7 @@ export default function Chat() {
                 onClick={handleToggleRecording}
                 disabled={loading || recordedAudio !== null}
                 className={cn(
-                  'size-1 overflow-hidden',
+                  'size-1 overflow-hidden pointer-events-auto relative z-40', // Agregar pointer-events-auto y z-40
                   recordedAudio ? 'pointer-events-none' : ''
                 )}
               >
