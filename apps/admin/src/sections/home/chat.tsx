@@ -292,18 +292,19 @@ export default function Chat() {
                       </p>
                       <div className='w-full h-px bg-neutral-200' />
                     </div>
-                    <TextAreaDrawer
-                      message={message}
-                      setMessage={setMessage}
-                      handleSendMessage={handleSendMessage}
-                      disabled={loading}
-                    />
+                    {/* Envolver TextAreaDrawer en un div con pointer-events-auto */}
+                    <div className='pointer-events-auto relative z-50'>
+                      <TextAreaDrawer
+                        message={message}
+                        setMessage={setMessage}
+                        handleSendMessage={handleSendMessage}
+                        disabled={loading}
+                      />
+                    </div>
                   </div>
                 </>
               ) : (
                 <>
-
-
                   <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
                     <Button
                       onClick={handleSubmitAudio}
@@ -339,7 +340,6 @@ export default function Chat() {
                       </>
                     )}
                   </div>
-
                 </>
               )}
             </div>
@@ -361,12 +361,13 @@ const getPastelColorFromEmoji = (emoji: string): string => {
     const g = (hash >> 8) & 0xff;
     const b = hash & 0xff;
 
-    return `rgb(${(r + 200) % 256}, ${(g + 200) % 256}, ${(b + 200) % 256}, 0.35)`;
+    return `rgb(${(r + 200) % 256}, ${(g + 200) % 256}, ${
+      (b + 200) % 256
+    }, 0.35)`;
   };
 
   return pastelColor(hash);
 };
-
 
 const FastResponseUI = ({ response }: { response: FastResponse }) => {
   const [, setLocation] = useLocation();
@@ -374,46 +375,54 @@ const FastResponseUI = ({ response }: { response: FastResponse }) => {
   const pastelColor = getPastelColorFromEmoji(response.mood_emoji);
 
   return (
-    <div className="pt-24 px-8 pb-12 max-w-md mx-auto text-base text-center flex flex-col gap-8 justify-between h-full min-h-svh">
-      <div className="flex flex-col gap-10">
-        <div className="flex flex-col gap-">
+    <div className='pt-24 px-8 pb-12 max-w-md mx-auto text-base text-center flex flex-col gap-8 justify-between h-full min-h-svh'>
+      <div className='flex flex-col gap-10'>
+        <div className='flex flex-col gap-'>
           <div
-            className="mb-3 flex text-5xl aspect-square rounded-full size-20 mx-auto items-center justify-center"
+            className='mb-3 flex text-5xl aspect-square rounded-full size-20 mx-auto items-center justify-center'
             style={{ backgroundColor: pastelColor }}
           >
             {response.mood_emoji}
           </div>
-          <h5 className="mt-2 text-2xl font-medium text-neutral-800">{response.title}</h5>
-          <p className="mt-2 text-base tracking-tight text-neutral-400 font-normal">{response.description}</p>
+          <h5 className='mt-2 text-2xl font-medium text-neutral-800'>
+            {response.title}
+          </h5>
+          <p className='mt-2 text-base tracking-tight text-neutral-400 font-normal'>
+            {response.description}
+          </p>
         </div>
-        <div className="flex flex-col gap-2">
+        <div className='flex flex-col gap-2'>
           {response.insights.map((insight, index) => (
             <div
               key={index}
               className={cn(
                 'flex items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
-                insight.type === 'positive' ? 'bg-green-100 border-green-200' : 'bg-red-100 border-red-200',
-                "shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]"
+                insight.type === 'positive'
+                  ? 'bg-green-100 border-green-200'
+                  : 'bg-red-100 border-red-200',
+                'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
               )}
             >
-              <div className={cn(
-                "size-10 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square",
-                insight.type === 'positive' ? 'bg-green-200 text-green-600' : 'bg-red-200 text-red-600'
-              )}>
-                {insight.type === 'positive' ? (
-                  <ThumbsUp />
-                ):(
-                  <ThumbsDown />
+              <div
+                className={cn(
+                  'size-10 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square',
+                  insight.type === 'positive'
+                    ? 'bg-green-200 text-green-600'
+                    : 'bg-red-200 text-red-600'
                 )}
+              >
+                {insight.type === 'positive' ? <ThumbsUp /> : <ThumbsDown />}
               </div>
-              <span className="text-neutral-800" >
-                {insight.text}
-              </span>
+              <span className='text-neutral-800'>{insight.text}</span>
             </div>
           ))}
         </div>
       </div>
-      <Button onClick={() => setLocation('/profile')} variant='primary' className='mt-3'>
+      <Button
+        onClick={() => setLocation('/profile')}
+        variant='primary'
+        className='mt-3'
+      >
         Ver resultados
       </Button>
     </div>
