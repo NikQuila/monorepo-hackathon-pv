@@ -429,7 +429,7 @@ const FastResponseUI = ({ response }: { response: FastResponse }) => {
         </div>
       </div>
       <Button
-        onClick={() => setLocation('/profile')}
+        onClick={() => setLocation('/journal')}
         variant='primary'
         className='mt-3'
       >

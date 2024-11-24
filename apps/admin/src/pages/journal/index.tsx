@@ -57,6 +57,55 @@ const JournalPage = () => {
   const entryContent =
     entries[formattedDate] || 'No hay entrada para este día.';
 
+  if (loading) {
+    return (
+      <div className='mx-auto'>
+        {/* Calendar Header Skeleton */}
+        <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
+          <div className='w-full flex justify-between px-3'>
+            {[...Array(7)].map((_, index) => (
+              <div
+                className='w-8 flex flex-col gap-1.5 items-center'
+                key={index}
+              >
+                <Skeleton className='h-3 w-3' /> {/* Day initial */}
+                <Skeleton className='size-7 rounded-full' /> {/* Date button */}
+              </div>
+            ))}
+          </div>
+          <Skeleton className='h-4 w-48' /> {/* Full date */}
+        </div>
+
+        {/* Content Area Skeleton */}
+        <div className='px-3 pt-6 pb-40'>
+          <div className='space-y-6'>
+            <div className='relative'>
+              <div className='max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10'>
+                <Skeleton className='h-4 w-16 mx-auto' /> {/* "Hoy" text */}
+                <Skeleton className='h-6 w-64 mx-auto' /> {/* Title */}
+                <Skeleton className='h-4 w-full' /> {/* Description */}
+                <Skeleton className='h-10 w-full mt-3' /> {/* Button */}
+              </div>
+
+              {/* Background lines */}
+              <div className='fixed inset-0 top-28 mx-4 flex flex-col'>
+                {Array(15)
+                  .fill(null)
+                  .map((_, i) => (
+                    <div
+                      key={i}
+                      className='border-b border-neutral-200/60'
+                      style={{ height: '2rem' }}
+                    />
+                  ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className='mx-auto'>
       <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>

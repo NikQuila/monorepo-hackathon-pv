@@ -186,8 +186,9 @@ const ProfilePage = () => {
                   key={index}
                   className='p-3 bg-blue-50 rounded-lg border border-blue-100'
                 >
-                  <p className='text-blue-800 capitalize'>
-                    {recommendation.mensaje}
+                  <p className='text-blue-800'>
+                    {recommendation.mensaje.charAt(0).toUpperCase() +
+                      recommendation.mensaje.slice(1).toLowerCase()}
                   </p>
                 </div>
               ))
