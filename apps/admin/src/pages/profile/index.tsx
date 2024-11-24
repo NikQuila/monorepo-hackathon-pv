@@ -14,6 +14,21 @@ import {
 } from '@common/api/users';
 import { Skeleton } from '@common/components/ui/skeleton';
 
+const conversationPrompts = [
+  {
+    text: 'Qué es lo que más te preocupa hoy en día?',
+    color: 'bg-[#FCE4CB]',
+  },
+  {
+    text: 'Porqué me pongo ansioso en la semana?',
+    color: 'bg-[#FCDDFD]',
+  },
+  {
+    text: 'Cómo te fue en tu clase de matématica?',
+    color: 'bg-[#D9E0FF]',
+  },
+];
+
 const daysOfWeek = [
   { day: 'L', emoji: '🥱', color: 'bg-[#C9C9FF]' },
   { day: 'M', emoji: '😭', color: 'bg-[#AADEFF]' },
@@ -134,7 +149,7 @@ const ProfilePage = () => {
 
   return (
     <div className='min-h-svh bg-[linear-gradient(90deg,_#FFFBFB_0%,_#FCE4CB_25%,_#FCDDFD_50%,_#D9E0FF_75%,_#F2F4FF_100%)]'>
-      {/* Header */}
+      {/* Heaer */}
       <div className='flex gap-2 items-center p-3 justify-between'>
         <img
           src='https://avatars.dicebear.com/api/avataaars/mati.svg'
@@ -153,7 +168,7 @@ const ProfilePage = () => {
       </div>
 
       {/* Mood Calendar */}
-      <div className='flex px-2 py-3'>
+      {/*   <div className='flex px-2 py-3'>
         <div className='flex gap-2 justify-between rounded-2xl w-full bg-white px-4 py-3'>
           {daysOfWeek.map(({ day, emoji, color }, index) => (
             <div
@@ -167,6 +182,21 @@ const ProfilePage = () => {
                 <span className='leading-none'>{emoji}</span>
               </div>
             </div>
+          ))}
+        </div>
+      </div> */}
+      {/* Conversation Prompts */}
+      <div className='flex px-2 py-3'>
+        <div className='flex flex-col gap-2 w-full'>
+          {conversationPrompts.map(({ text, color }, index) => (
+            <button
+              key={index}
+              className={`w-full text-left p-4 rounded-xl ${color} hover:opacity-90 transition-opacity`}
+            >
+              <span className='text-sm font-medium text-neutral-800'>
+                {text}
+              </span>
+            </button>
           ))}
         </div>
       </div>

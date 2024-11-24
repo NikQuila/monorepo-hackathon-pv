@@ -4,6 +4,7 @@ import { fetchUserProfile } from 'common/src/api/users';
 import useUserStore from '../store/useUserStore';
 import { supabase } from 'common/src/supabase';
 import { useLocation } from 'wouter';
+import { signOut } from '@common/api/auth';
 
 const useAuthState = () => {
   const { setUserProfile, userProfile } = useUserStore();
@@ -17,8 +18,6 @@ const useAuthState = () => {
         const userData = await fetchUserProfile(userId);
         setUserProfile(userData);
 
-        // If user is logged in but doesn't have required profile data, redirect to home
-        // where onboarding will be shown
         if (userData && (!userData.name || !userData.age)) {
           setLocation('/');
         }

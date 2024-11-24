@@ -91,6 +91,8 @@ export default function Onboarding() {
                 (Number(age.split('-')[0]) + Number(age.split('-')[1])) / 2
               )
             );
+      console.log(calculatedAge);
+      console.log(userProfile?.id);
       const res = await updateUserProfile(userProfile?.id as string, {
         name,
         age: calculatedAge,
@@ -117,9 +119,9 @@ export default function Onboarding() {
               id='name'
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="text-lg bg-neutral-200/40 border-0"
-              placeholder="Tu nombre"
-              type="name"
+              className='text-lg bg-neutral-200/40 border-0'
+              placeholder='Tu nombre'
+              type='name'
               autoFocus
             />
           </BlurFade>
@@ -190,7 +192,7 @@ export default function Onboarding() {
           : 'items-start justify-between'
       )}
     >
-      <div className="w-full max-w-md mx-auto text-xl text-neutral-500 text-center flex flex-col gap-6">
+      <div className='w-full max-w-md mx-auto text-xl text-neutral-500 text-center flex flex-col gap-6'>
         <BlurFade delay={0.25}>
           {currentStep === 'welcome' && 'Hola, Soy Journie'}
         </BlurFade>
