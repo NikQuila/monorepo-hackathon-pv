@@ -22,3 +22,16 @@ export const sendJournalFastResponse = async (data: any) => {
     throw error;
   }
 };
+
+export const getAiInsight = async (userId: string, question: string) => {
+  try {
+    const response = await axios.post(`${API_URL}/ai-insight`, {
+      userId,
+      question,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error getting ai insight:', error);
+    throw error;
+  }
+};

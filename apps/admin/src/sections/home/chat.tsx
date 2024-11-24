@@ -173,13 +173,15 @@ export default function Chat() {
         user_id: userProfile?.id as string,
       };
 
-      // 4. Call both endpoints simultaneously
-      const [fastResponseResult] = await Promise.all([
+      // Option 2: Race condition
+      const fastResponseResult = await Promise.race([
         sendJournalFastResponse(payload),
-        sendMessageOrAudio(payload), // We still call this but don't wait for the result
+        sendMessageOrAudio(payload),
       ]);
 
-      // 5. Set fast response to show UI
+      console.log('fastResponseResult', fastResponseResult);
+      setFastResponse(fastResponseResult);
+
       setFastResponse(fastResponseResult);
       toast.success('¡Gracias por subir tu journal!');
     } catch (error) {

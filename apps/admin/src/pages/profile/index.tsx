@@ -219,7 +219,7 @@ const ProfilePage = () => {
         </div>
 
         {/* Improvement Areas Section */}
-        <div className='space-y-4'>
+        <div className='space-y-4 pb-20'>
           <h3 className='text-lg font-medium text-neutral-500'>
             Áreas de mejora
           </h3>
