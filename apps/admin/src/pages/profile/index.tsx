@@ -3,6 +3,7 @@ import useUserStore from '@/store/useUserStore';
 import { signOut } from '@common/api/auth';
 import { Button } from '@common/components/ui/button';
 import { LogOut } from 'lucide-react';
+import { useLocation } from 'wouter';
 import {
   fetchUserProfile,
   analyzeMood,
@@ -42,6 +43,7 @@ const daysOfWeek = [
 const ProfilePage = () => {
   const { userProfile } = useUserStore();
   const [mood, setMood] = useState('');
+  const [, setLocation] = useLocation();
   const [recommendations, setRecommendations] = useState<{ mensaje: string }[]>(
     []
   );
@@ -186,24 +188,29 @@ const ProfilePage = () => {
         </div>
       </div> */}
       {/* Conversation Prompts */}
-      <div className='flex px-2 py-3'>
+
+      <div className='px-6 py-3'>
+        <p className='text-neutral-100 text-3xl text-center pb-4'>
+          De que te quieres hablar?
+        </p>
         <div className='flex flex-col gap-2 w-full'>
           {conversationPrompts.map(({ text, color }, index) => (
-            <button
+            <Button
               key={index}
-              className={`w-full text-left p-4 rounded-xl ${color} hover:opacity-90 transition-opacity`}
+              onClick={() => setLocation(`/chat?prompt=${text}`)}
+              className={`w-full text-left p-4 rounded-xl bg-purple-100 hover:opacity-90 transition-opacity`}
             >
               <span className='text-sm font-medium text-neutral-800'>
                 {text}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
 
       {/* Content */}
       <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] p-6'>
-        <h2 className='text-lg font-semibold'>Este mes</h2>
+        <h2 className='text-lg font-semibold'>El resumen de este mes</h2>
         {/* Recommendations Sectio */}
         <div className='space-y-4'>
           <h3 className='text-lg font-medium text-neutral-500'>

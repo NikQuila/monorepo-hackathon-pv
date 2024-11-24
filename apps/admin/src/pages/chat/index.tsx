@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowLeft, SendHorizontal, X } from 'lucide-react';
 import { Button } from '@common/components/ui/button';
 import { Textarea } from '@common/components/ui/textarea';
@@ -17,13 +17,17 @@ const ChatPage = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [initialPromptSent, setInitialPromptSent] = useState(false);
+  const params = new URLSearchParams(window.location.search);
+  const initialPrompt = params.get('prompt');
 
-  const handleSendMessage = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSendMessage = async (messageText?: string) => {
+    const textToSend = messageText || input;
+    if (!textToSend.trim() || isLoading) return;
 
     const newMessage: Message = {
       id: Date.now().toString(),
-      content: input,
+      content: textToSend,
       isUser: true,
     };
 
@@ -32,9 +36,10 @@ const ChatPage = () => {
     setIsLoading(true);
 
     try {
-      // Here you would integrate with your AI service
-      // Using the existing endpoint from your backend
-      const response = await getAiInsight(userProfile?.id as string, input);
+      const response = await getAiInsight(
+        userProfile?.id as string,
+        textToSend
+      );
       console.log('response', response);
 
       const aiResponse: Message = {
@@ -50,6 +55,10 @@ const ChatPage = () => {
       setIsLoading(false);
     }
   };
+  if (initialPrompt && !initialPromptSent) {
+    handleSendMessage(initialPrompt);
+    setInitialPromptSent(true);
+  }
 
   return (
     <div className='flex flex-col h-screen bg-brandgradient'>
@@ -111,7 +120,7 @@ const ChatPage = () => {
             }}
           />
           <Button
-            onClick={handleSendMessage}
+            onClick={() => handleSendMessage(input)}
             disabled={isLoading || !input.trim()}
             size='icon'
             className='bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec] text-neutral-800 hover:opacity-90'
