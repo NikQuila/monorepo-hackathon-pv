@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useUserStore from '@/store/useUserStore';
 import { signOut } from '@common/api/auth';
 import { Button } from '@common/components/ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, Mic } from 'lucide-react';
 import { useLocation } from 'wouter';
 import {
   fetchUserProfile,
@@ -14,18 +14,20 @@ import {
   GoodHabit,
 } from '@common/api/users';
 import { Skeleton } from '@common/components/ui/skeleton';
+import Ripple from '@common/components/ui/ripple';
+import { cn } from '@/lib/utils';
 
 const conversationPrompts = [
   {
-    text: 'Qué es lo que más te preocupa hoy en día?',
+    text: '¿Qué cosas me hacen bien?',
     color: 'bg-[#FCE4CB]',
   },
   {
-    text: 'Porqué me pongo ansioso en la semana?',
+    text: '¿Qué cosas me hacen mal?',
     color: 'bg-[#FCDDFD]',
   },
   {
-    text: 'Cómo te fue en tu clase de matématica?',
+    text: '¿Qué cosas me gustaría mejorar?',
     color: 'bg-[#D9E0FF]',
   },
 ];
@@ -59,19 +61,13 @@ const ProfilePage = () => {
 
       try {
         setLoading(true);
-        const [
-          moodResult,
-          recommendationsResult,
-          goodHabitsResult,
-          dobetterResult,
-        ] = await Promise.all([
-          analyzeMood(userProfile.id),
-          getRecommendations(userProfile.id),
-          getGoodHabits(userProfile.id),
-          getDoBetterRecommendations(userProfile.id),
-        ]);
+        const [recommendationsResult, goodHabitsResult, dobetterResult] =
+          await Promise.all([
+            getRecommendations(userProfile.id),
+            getGoodHabits(userProfile.id),
+            getDoBetterRecommendations(userProfile.id),
+          ]);
 
-        setMood(moodResult);
         setRecommendations(recommendationsResult);
         setGoodHabits(goodHabitsResult.goodhabits);
         setDobetterHabits(dobetterResult);
@@ -150,7 +146,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className='min-h-svh bg-[linear-gradient(90deg,_#FFFBFB_0%,_#FCE4CB_25%,_#FCDDFD_50%,_#D9E0FF_75%,_#F2F4FF_100%)]'>
+    <div className='min-h-svh bg-[linear-gradient(180deg,#Fce6cf_0%,_#fbcffc_10%,_#CCd5ff_20%)]'>
       {/* Heaer */}
       <div className='flex gap-2 items-center p-3 justify-between'>
         <img
@@ -188,17 +184,33 @@ const ProfilePage = () => {
         </div>
       </div> */}
       {/* Conversation Prompts */}
-
+      <div className='flex flex-col items-center gap-4 relative mt-20 h-60'>
+        <Ripple
+          numCircles={3}
+          mainCircleSize={164}
+          mainCircleOpacity={0.9}
+          color={'bg-white'}
+          className={'animate-ripple'}
+        />
+        <div
+          className={cn(
+            'absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200',
+            'text-neutral-800 top-0 left-0 -mt-16'
+          )}
+        >
+          <Mic />
+        </div>
+      </div>
       <div className='px-6 py-3'>
         <p className='text-neutral-100 text-3xl text-center pb-4'>
-          De que te quieres hablar?
+          De qué quieres hablar?
         </p>
-        <div className='flex flex-col gap-2 w-full'>
+        <div className='flex flex-col gap-2 w-full pt-3 pb-4'>
           {conversationPrompts.map(({ text, color }, index) => (
             <Button
               key={index}
               onClick={() => setLocation(`/chat?prompt=${text}`)}
-              className={`w-full text-left p-4 rounded-xl bg-purple-100 hover:opacity-90 transition-opacity`}
+              className={`w-full h-10 bg-white/25 backdrop-blur-md shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]`}
             >
               <span className='text-sm font-medium text-neutral-800'>
                 {text}
@@ -221,9 +233,9 @@ const ProfilePage = () => {
               recommendations?.map((recommendation, index) => (
                 <div
                   key={index}
-                  className='p-3 bg-blue-50 rounded-lg border border-blue-100'
+                  className='p-3 bg-neutral-50 rounded-lg border border-neutral-100'
                 >
-                  <p className='text-blue-800'>
+                  <p className='text-neutral-800'>
                     {recommendation.mensaje.charAt(0).toUpperCase() +
                       recommendation.mensaje.slice(1).toLowerCase()}
                   </p>
