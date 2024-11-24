@@ -174,7 +174,7 @@ const ProfilePage = () => {
       {/* Content */}
       <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] p-6'>
         <h2 className='text-lg font-semibold'>Este mes</h2>
-        {/* Recommendations Section */}
+        {/* Recommendations Sectio */}
         <div className='space-y-4'>
           <h3 className='text-lg font-medium text-neutral-500'>
             Recomendaciones
