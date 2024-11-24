@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useLocation } from 'wouter';
-import { ArrowRight, Mic, MicOff, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { ArrowRight, Mic, MicOff, ThumbsDown, ThumbsUp, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { Button } from '@common/components/ui/button';
 import { sendJournalFastResponse, sendMessageOrAudio } from '@common/api/chat';
@@ -232,6 +232,14 @@ export default function Chat() {
 
   return (
     <div className='flex flex-col items-center fixed inset-0 z-50 bg-brandgradient'>
+      <Button
+        onClick={() => setLocation('/journal')}
+        size='icon'
+        variant='ghost'
+        className='absolute top-6 left-6 text-neutral-600 hover:text-neutral-800 z-[60]'
+      >
+        <X className='' />
+      </Button>
       {fastResponse ? (
         <div className='w-full animate-fade-in'>
           <FastResponseUI response={fastResponse} />
