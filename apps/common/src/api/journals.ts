@@ -3,13 +3,15 @@ import { DateTime } from 'luxon';
 
 export const fetchJournalEntries = async (
   startDate: DateTime,
-  endDate: DateTime
+  endDate: DateTime,
+  userId: string
 ) => {
   const { data, error } = await supabase
     .from('journal_entries')
     .select('*')
     .gte('created_at', startDate.toISO())
     .lte('created_at', endDate.toISO())
+    .eq('user_id', userId)
     .order('created_at', { ascending: false });
 
   if (error) {

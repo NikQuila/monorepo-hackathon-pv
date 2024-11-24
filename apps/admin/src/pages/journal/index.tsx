@@ -5,8 +5,10 @@ import { useEffect, useState } from 'react';
 import { fetchJournalEntries } from '@common/api/journals';
 import { ScrollArea } from '@common/components/ui/scroll-area';
 import { Button } from '@common/components/ui/button';
+import useUserStore from '@/store/useUserStore';
 
 const JournalPage = () => {
+  const { userProfile } = useUserStore();
   const today = DateTime.now();
   const [selectedDate, setSelectedDate] = useState(today);
   const [entries, setEntries] = useState<Record<string, string>>({});
@@ -17,7 +19,11 @@ const JournalPage = () => {
       setLoading(true);
       const startDate = today.minus({ days: 3 });
       const endDate = today.plus({ days: 3 });
-      const data = await fetchJournalEntries(startDate, endDate);
+      const data = await fetchJournalEntries(
+        startDate,
+        endDate,
+        userProfile?.id as string
+      );
       setEntries(data);
       setLoading(false);
     };

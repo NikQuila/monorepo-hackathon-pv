@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'wouter';
-import { Home, Notebook, Plus } from 'lucide-react';
+import { Home, Notebook, Plus, MessageCircle } from 'lucide-react';
 import { Fragment } from 'react/jsx-runtime';
 import { Button } from '../ui/button';
 import { motion } from 'framer-motion';
