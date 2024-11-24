@@ -62,7 +62,7 @@ const ChatPage = () => {
 
   return (
     <div className='flex flex-col h-screen bg-brandgradient'>
-      {/* Header */}
+      {/* Headr */}
       <div className='p-4 border-b bg-white/50 backdrop-blur-sm justify-between flex'>
         <h1 className='text-xl font-medium text-neutral-800'>Chat con IA</h1>
         <Button
