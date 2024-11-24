@@ -60,7 +60,6 @@ const JournalPage = () => {
   if (loading) {
     return (
       <div className='mx-auto'>
-        {/* Calendar Header Skeleton */}
         <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
           <div className='w-full flex justify-between px-3'>
             {[...Array(7)].map((_, index) => (
@@ -68,12 +67,12 @@ const JournalPage = () => {
                 className='w-8 flex flex-col gap-1.5 items-center'
                 key={index}
               >
-                <Skeleton className='h-3 w-3' /> {/* Day initial */}
-                <Skeleton className='size-7 rounded-full' /> {/* Date button */}
+                <Skeleton className='h-3 w-3' />
+                <Skeleton className='size-7 rounded-full' />
               </div>
             ))}
           </div>
-          <Skeleton className='h-4 w-48' /> {/* Full date */}
+          <Skeleton className='h-4 w-48' />
         </div>
 
         {/* Content Area Skeleton */}
@@ -148,8 +147,7 @@ const JournalPage = () => {
           <div className='relative'>
             {entryContent === 'No hay entrada para este día.' ? (
               <>
-                <div className='max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10'>
-                  <span className='text-sm text-neutral-900'>Hoy</span>
+                <div className='max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-3 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-4 pt-12 pb-10'>
                   <h1 className='text-xl font-semibold text-neutral-900'>
                     No has escrito nada todavía.
                   </h1>
@@ -158,11 +156,13 @@ const JournalPage = () => {
                     ayudarte.
                   </p>
                   <Button variant='primary' className='mt-3'>
-                    Cuéntame algo
+                    <a href="/">
+                      Cuéntame algo
+                    </a>
                   </Button>
                 </div>
                 <div className='fixed inset-0 top-28 mx-4 flex flex-col'>
-                  {Array(15)
+                  {Array(26)
                     .fill(null)
                     .map((_, i) => (
                       <div
@@ -179,11 +179,11 @@ const JournalPage = () => {
                   className='relative whitespace-pre-wrap text-neutral-700 leading-8'
                   style={{ minHeight: '30rem' }}
                 >
-                  {entryContent}
+                  {entryContent.replace(/-/g, '')}
                 </div>
               </>
             )}
-            <div className='bg-gradient-to-t from-white to-transparent w-screen h-24 fixed bottom-20 inset-x-0 z-10' />
+            <div className='bg-gradient-to-t from-white to-transparent w-screen h-24 fixed bottom-16 inset-x-0 z-10' />
             <div className='absolute inset-0 flex flex-col -mt-0.5'>
               {Array(15)
                 .fill(null)

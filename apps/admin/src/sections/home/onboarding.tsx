@@ -119,7 +119,7 @@ export default function Onboarding() {
               id='name'
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className='text-lg bg-neutral-200/40 border-0'
+              className='text-lg bg-neutral-200/40 border-0 -mt-16'
               placeholder='Tu nombre'
               type='name'
               autoFocus
@@ -194,7 +194,7 @@ export default function Onboarding() {
     >
       <div className='w-full max-w-md mx-auto text-xl text-neutral-500 text-center flex flex-col gap-6'>
         <BlurFade delay={0.25}>
-          {currentStep === 'welcome' && 'Hola, Soy Journie'}
+          {currentStep === 'welcome' && 'Hola, Soy Yournal'}
         </BlurFade>
         <BlurFade delay={3.25} inView>
           {currentStep === 'name' && '¿Cuál es tu nombre?'}

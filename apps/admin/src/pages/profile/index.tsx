@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useUserStore from '@/store/useUserStore';
 import { signOut } from '@common/api/auth';
 import { Button } from '@common/components/ui/button';
-import { LogOut, Mic } from 'lucide-react';
+import { Book, LogOut, Mic, Pen, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { useLocation } from 'wouter';
 import {
   fetchUserProfile,
@@ -16,6 +16,8 @@ import {
 import { Skeleton } from '@common/components/ui/skeleton';
 import Ripple from '@common/components/ui/ripple';
 import { cn } from '@/lib/utils';
+
+const icons = [Pen, Mic, Book, Star];
 
 const conversationPrompts = [
   {
@@ -85,29 +87,24 @@ const ProfilePage = () => {
   if (loading) {
     return (
       <div className='min-h-svh bg-[linear-gradient(90deg,_#FFFBFB_0%,_#FCE4CB_25%,_#FCDDFD_50%,_#D9E0FF_75%,_#F2F4FF_100%)]'>
-        {/* Header Skeleton */}
         <div className='flex gap-2 items-center p-3 justify-between'>
           <Skeleton className='size-7 rounded-full' />
-          <Skeleton className='h-4 w-32' />
           <Skeleton className='size-8 rounded-lg shrink-0' />
         </div>
 
-        {/* Mood Calendar Skeleton */}
-        <div className='flex px-2 py-3'>
-          <div className='flex gap-2 justify-between rounded-2xl w-full bg-white px-4 py-3'>
-            {Array.from({ length: 7 }).map((_, index) => (
-              <div
-                key={index}
-                className='w-32 flex flex-col items-center gap-1.5'
-              >
-                <Skeleton className='h-2 w-3' />
-                <Skeleton className='size-8 rounded-full' />
-              </div>
-            ))}
-          </div>
+        <div className='flex flex-col items-center gap-4 relative mt-32 h-40'>
+          <Ripple
+            numCircles={3}
+            mainCircleSize={128}
+            mainCircleOpacity={0.9}
+            color={'bg-white/25'}
+            className={'animate-ripple'}
+          />
         </div>
-
-        {/* Content Skeleton */}
+        <Skeleton className='h-12 w-64 mx-auto mb-4' />
+          <Skeleton className='h-12 w-full mx-6 mb-2' />
+          <Skeleton className='h-12 w-full mx-6 mb-2' />
+          <Skeleton className='h-12 w-full mx-6 mb-5' />
         <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] p-6'>
           <Skeleton className='h-6 w-24' />
 
@@ -158,7 +155,7 @@ const ProfilePage = () => {
         <Button
           size='icon'
           variant='ghost'
-          className='shrink-0 hover:bg-black/40'
+          className='shrink-0 [&_svg]:size-5 hover:bg-transparent'
           onClick={signOut}
         >
           <LogOut />
@@ -184,17 +181,17 @@ const ProfilePage = () => {
         </div>
       </div> */}
       {/* Conversation Prompts */}
-      <div className='flex flex-col items-center gap-4 relative mt-20 h-60'>
+      <div onClick={() => setLocation("/chat")} className='flex flex-col items-center gap-4 relative mt-32 h-40'>
         <Ripple
           numCircles={3}
-          mainCircleSize={164}
+          mainCircleSize={128}
           mainCircleOpacity={0.9}
           color={'bg-white'}
           className={'animate-ripple'}
         />
         <div
           className={cn(
-            'absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200',
+            'absolute z-50 [&_svg]:size-14 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200',
             'text-neutral-800 top-0 left-0 -mt-16'
           )}
         >
@@ -203,63 +200,84 @@ const ProfilePage = () => {
       </div>
       <div className='px-6 py-3'>
         <p className='text-neutral-100 text-3xl text-center pb-4'>
-          De qué quieres hablar?
+          ¿De qué quieres hablar?
         </p>
         <div className='flex flex-col gap-2 w-full pt-3 pb-4'>
           {conversationPrompts.map(({ text, color }, index) => (
-            <Button
+            <div
               key={index}
               onClick={() => setLocation(`/chat?prompt=${text}`)}
-              className={`w-full h-10 bg-white/25 backdrop-blur-md shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]`}
+              className={`w-full h-12 bg-white/25 backdrop-blur-md font-bold text-sm flex items-center justify-center rounded-md shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]`}
             >
               <span className='text-sm font-medium text-neutral-800'>
                 {text}
               </span>
-            </Button>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Content */}
-      <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] p-6'>
-        <h2 className='text-lg font-semibold'>El resumen de este mes</h2>
-        {/* Recommendations Sctio */}
+      <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] pt-8 pb-16 p-6'>
+        <h2 className='text-lg font-semibold'>Sobre ti</h2>
         <div className='space-y-4'>
           <h3 className='text-lg font-medium text-neutral-500'>
             Recomendaciones
           </h3>
-          <div className='space-y-2'>
+          <div className="space-y-2 pb-8">
             {recommendations?.length > 0 ? (
-              recommendations?.map((recommendation, index) => (
-                <div
-                  key={index}
-                  className='p-3 bg-neutral-50 rounded-lg border border-neutral-100'
-                >
-                  <p className='text-neutral-800'>
-                    {recommendation.mensaje.charAt(0).toUpperCase() +
-                      recommendation.mensaje.slice(1).toLowerCase()}
-                  </p>
-                </div>
-              ))
+              recommendations.map((recommendation, index) => {
+                const RandomIcon = icons[Math.floor(Math.random() * icons.length)];
+                return (
+                  <div
+                    key={index}
+                    className={cn(
+                      'flex bg-white text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
+                      'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        'size-8 bg-neutral-100 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
+                      )}
+                    >
+                      <RandomIcon />
+                    </div>
+                    <span className="text-neutral-800">
+                      {recommendation.mensaje.charAt(0).toUpperCase() + recommendation.mensaje.slice(1)}
+                    </span>
+                  </div>
+                );
+              })
             ) : (
-              <p className='text-neutral-500'>No tienes recomendaciones</p>
+              <p className="text-neutral-500">No tienes recomendaciones</p>
             )}
           </div>
         </div>
 
-        {/* Good Habits Section */}
         <div className='space-y-4'>
           <h3 className='text-lg font-medium text-neutral-500'>
             Buenos hábitos
           </h3>
-          <div className='space-y-2'>
+          <div className='space-y-2 pb-8'>
             {goodHabits?.length > 0 ? (
               goodHabits?.map((habit, index) => (
                 <div
                   key={index}
-                  className='p-3 bg-green-50 rounded-lg border border-green-100'
+                  className={cn(
+                    'flex bg-green-100 border-green-200 text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
+                    'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
+                  )}
                 >
-                  <p className='text-green-800'>{habit.mensaje}</p>
+                  <div
+                    className={cn(
+                      'size-8 bg-green-200 text-green-600 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
+                    )}
+                  >
+                    <ThumbsUp />
+                  </div>
+                  <span className="text-neutral-800">
+                    {habit.mensaje}
+                  </span>
                 </div>
               ))
             ) : (
@@ -268,19 +286,30 @@ const ProfilePage = () => {
           </div>
         </div>
 
-        {/* Improvement Areas Section */}
         <div className='space-y-4 pb-20'>
           <h3 className='text-lg font-medium text-neutral-500'>
-            Áreas de mejora
+            Hábitos por mejorar
           </h3>
-          <div className='space-y-2'>
+          <div className='space-y-2 pb-8'>
             {dobetterHabits?.length > 0 ? (
               dobetterHabits?.map((habit, index) => (
                 <div
                   key={index}
-                  className='p-3 bg-red-50 rounded-lg border border-red-100'
+                  className={cn(
+                    'flex bg-red-100 border-red-200 text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
+                    'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
+                  )}
                 >
-                  <p className='text-red-800'>{habit.mensaje}</p>
+                  <div
+                    className={cn(
+                      'size-8 bg-red-200 text-red-600 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
+                    )}
+                  >
+                    <ThumbsDown />
+                  </div>
+                  <span className="text-neutral-800">
+                    {habit.mensaje}
+                  </span>
                 </div>
               ))
             ) : (

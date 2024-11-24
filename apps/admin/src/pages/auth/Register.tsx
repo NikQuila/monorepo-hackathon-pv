@@ -45,9 +45,9 @@ export default function Register({ setView }: Props) {
       <div className="flex flex-col items-center gap-12">
         <div className="flex flex-col items-center gap-5">
           <div className="flex items-center justify-center size-20">
-            <img src="/isotipo.svg" alt="Journie" className="h-12 w-auto" />
+            <img src="/isotipo.svg" alt="yournal" className="h-12 w-auto" />
           </div>
-          <h2 className="text-2xl font-medium">Regístrate en Journie</h2>
+          <h2 className="text-2xl font-medium">Regístrate en Yournal</h2>
         </div>
 
         <div className="space-y-8 max-w-96">
@@ -60,7 +60,7 @@ export default function Register({ setView }: Props) {
                 setEmail(e.target.value)
               }
               className="border-transparent bg-neutral-200/30 shadow-none"
-              placeholder="m@journie.com"
+              placeholder="m@yournal.com"
               type="email"
             />
           </div>

@@ -238,9 +238,9 @@ export default function Chat() {
         onClick={() => setLocation('/journal')}
         size='icon'
         variant='ghost'
-        className='absolute top-6 left-6 text-neutral-600 hover:text-neutral-800 z-[60]'
+        className="[&_svg]:size-6 m-3 ml-auto p-4 text-neutral-400"
       >
-        <X className='' />
+        <X />
       </Button>
       {fastResponse ? (
         <div className='w-full animate-fade-in'>
@@ -345,7 +345,7 @@ export default function Chat() {
                           }}
                           className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black w-full'
                         >
-                          Grabar Denuevo
+                          Intentar de nuevo
                         </Button>
                       </>
                     )}

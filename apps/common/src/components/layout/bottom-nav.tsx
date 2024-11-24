@@ -38,8 +38,7 @@ export function BottomNav() {
                       : 'text-gray-500 border-t-2 border-transparent'
                   }`}
                 >
-                  <item.icon className='w-6 h-6 mb-1' />
-                  <span>{item.label}</span>
+                  <item.icon className='w-6 h-6 my-1' />
                 </Link>
               </li>
             </Fragment>
@@ -49,7 +48,7 @@ export function BottomNav() {
       <Button
         variant='primary'
         onClick={() => setLocation('/')}
-        className='shadow-none size-20 [&_svg]:size-11 [&_svg]:stroke-[1.5] absolute -translate-y-1/2 left-1/2 -translate-x-1/2 top-0'
+        className='bg-[linear-gradient(90deg,_#FCE6CF_15%,_#FBCFFC_50%,_#CCD5FF_85%)] shadow-none size-20 [&_svg]:size-11 [&_svg]:stroke-[1.5] absolute -translate-y-1/2 left-1/2 -translate-x-1/2 top-0'
       >
         <Plus />
       </Button>
