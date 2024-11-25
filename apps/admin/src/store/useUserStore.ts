@@ -4,7 +4,7 @@ import { fetchUserProfile } from '@common/api/users';
 
 type UserProfile = {
   userProfile: null | User;
-  setUserProfile: (userProfile: User) => void;
+  setUserProfile: (userProfile: User | null) => void;
   clearUserProfile: () => void;
   refreshUserProfile: () => void;
   darkMode: boolean;
@@ -13,7 +13,7 @@ type UserProfile = {
 
 const useUserStore = create<UserProfile>((set) => ({
   userProfile: null,
-  setUserProfile: (userProfile: User) => set({ userProfile }),
+  setUserProfile: (userProfile: User | null) => set({ userProfile }),
   clearUserProfile: () => set({ userProfile: null }),
   refreshUserProfile: async () => {
     try {

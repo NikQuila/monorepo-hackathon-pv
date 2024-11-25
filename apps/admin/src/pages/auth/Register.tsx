@@ -1,29 +1,40 @@
-import { useState, SetStateAction } from "react";
-import { Input } from "@common/components/ui/input";
-import { Label } from "@common/components/ui/label";
-import { Button } from "@common/components/ui/button";
+import { useState, SetStateAction } from 'react';
+import { Input } from '@common/components/ui/input';
+import { Label } from '@common/components/ui/label';
+import { Button } from '@common/components/ui/button';
 import {
   registerWithEmailAndPassword,
   createUserProfile,
-} from "common/src/api/auth";
+} from 'common/src/api/auth';
 
 type Props = {
-  setView: (view: "login" | "register") => void;
+  setView: (view: 'login' | 'register') => void;
 };
 
 export default function Register({ setView }: Props) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleRegister = async () => {
-    setError("");
+    setError('');
     setLoading(true);
+    if (password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres');
+      setLoading(false);
+      return;
+    }
+
+    if (!email.includes('@')) {
+      setError('El email no es válido');
+      setLoading(false);
+      return;
+    }
 
     if (password !== confirmPassword) {
-      setError("Las contraseñas no coinciden");
+      setError('Las contraseñas no coinciden');
       setLoading(false);
       return;
     }
@@ -34,78 +45,80 @@ export default function Register({ setView }: Props) {
         await createUserProfile({ ...user });
       }
     } catch (error) {
-      setError("Error al registrar usuario");
+      setError('Error al registrar usuario');
     }
 
     setLoading(false);
   };
 
   return (
-    <form className="flex flex-col text-neutral-800 h-screen w-full *:w-full *:*:w-full p-12 pt-24 items-start justify-between">
-      <div className="flex flex-col items-center gap-12">
-        <div className="flex flex-col items-center gap-5">
-          <div className="flex items-center justify-center size-20">
-            <img src="/isotipo.svg" alt="yournal" className="h-12 w-auto" />
+    <form className='flex flex-col text-neutral-800 h-screen w-full *:w-full *:*:w-full p-12 pt-24 items-start justify-between'>
+      <div className='flex flex-col items-center gap-12'>
+        <div className='flex flex-col items-center gap-5'>
+          <div className='flex items-center justify-center size-20'>
+            <img src='/isotipo.svg' alt='yournal' className='h-12 w-auto' />
           </div>
-          <h2 className="text-2xl font-medium">Regístrate en Yournal</h2>
+          <h2 className='text-2xl font-medium'>Regístrate en Yournal</h2>
         </div>
 
-        <div className="space-y-8 max-w-96">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+        <div className='space-y-8 max-w-96'>
+          <div className='space-y-2'>
+            <Label htmlFor='email'>Email</Label>
             <Input
-              id="email"
+              id='email'
               value={email}
               onChange={(e: { target: { value: SetStateAction<string> } }) =>
                 setEmail(e.target.value)
               }
-              className="border-transparent bg-neutral-200/30 shadow-none"
-              placeholder="m@yournal.com"
-              type="email"
+              className='border-transparent bg-neutral-200/30 shadow-none'
+              placeholder='m@yournal.com'
+              type='email'
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="password">Contraseña</Label>
+          <div className='space-y-2'>
+            <Label htmlFor='password'>Contraseña</Label>
             <Input
-              id="password"
+              id='password'
               value={password}
               onChange={(e: { target: { value: SetStateAction<string> } }) =>
                 setPassword(e.target.value)
               }
-              className="border-transparent bg-neutral-200/30 shadow-none"
-              placeholder="********"
-              type="password"
+              className='border-transparent bg-neutral-200/30 shadow-none'
+              placeholder='********'
+              type='password'
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="confirm-password">Confirmar Contraseña</Label>
+          <div className='space-y-2'>
+            <Label htmlFor='confirm-password'>Confirmar Contraseña</Label>
             <Input
-              id="confirm-password"
+              id='confirm-password'
               value={confirmPassword}
               onChange={(e: { target: { value: SetStateAction<string> } }) =>
                 setConfirmPassword(e.target.value)
               }
-              className="border-transparent bg-neutral-200/30 shadow-none"
-              placeholder="********"
-              type="password"
+              className='border-transparent bg-neutral-200/30 shadow-none'
+              placeholder='********'
+              type='password'
             />
           </div>
 
-          {error && <p className="text-red-500/80 text-sm font-medium">⚠️ {error}</p>}
+          {error && (
+            <p className='text-red-500/80 text-sm font-medium'>⚠️ {error}</p>
+          )}
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 max-w-96 mx-auto">
-        <Button onClick={handleRegister} disabled={loading} variant="primary">
-          {loading ? "Registrando..." : "Registrarse"}
+      <div className='flex flex-col gap-4 max-w-96 mx-auto'>
+        <Button onClick={handleRegister} disabled={loading} variant='primary'>
+          {loading ? 'Registrando...' : 'Registrarse'}
         </Button>
-        <p className="text-center text-sm text-gray-400 h-10 flex gap-1.5 justify-center items-center">
-          Ya tienes una cuenta?{" "}
+        <p className='text-center text-sm text-gray-400 h-10 flex gap-1.5 justify-center items-center'>
+          Ya tienes una cuenta?{' '}
           <button
-            onClick={() => setView("login")}
-            className="font-medium text-neutral-800 underline hover:text-neutral-800/80"
+            onClick={() => setView('login')}
+            className='font-medium text-neutral-800 underline hover:text-neutral-800/80'
           >
             Inicia sesión
           </button>

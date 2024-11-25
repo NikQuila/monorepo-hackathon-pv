@@ -13,7 +13,7 @@ const useAuthState = () => {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    const fetchProfile = async (userId: string) => {
+    const fetchProfile = async (userId: string, retries = 3) => {
       try {
         const userData = await fetchUserProfile(userId);
         setUserProfile(userData);
@@ -22,8 +22,16 @@ const useAuthState = () => {
           setLocation('/');
         }
       } catch (error) {
-        console.error('Error fetching user profile:', error);
-        setLoading(false);
+        if (retries > 0) {
+          console.warn(
+            `Retrying fetch user profile... Attempts left: ${retries}`
+          );
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
+          fetchProfile(userId, retries - 1);
+        } else {
+          console.error('Error fetching user profile:', error);
+          setLoading(false);
+        }
       }
     };
 
@@ -35,6 +43,7 @@ const useAuthState = () => {
         console.log('No session found');
         setLoading(false);
         setSession(null);
+        setUserProfile(null);
       }
     });
 
@@ -48,6 +57,7 @@ const useAuthState = () => {
         console.log('No session found');
         setLoading(false);
         setSession(null);
+        setUserProfile(null);
       }
     });
 
