@@ -61,7 +61,7 @@ const ChatPage = () => {
   }
 
   return (
-    <div className='fixed z-50 w-screen flex flex-col h-screen bg-brandgradient'>
+    <div className='fixed z-50 max-w-md mx-auto w-screen flex flex-col h-svh bg-brandgradient'>
       <div className='items-center p-4 border-b bg-white/50 backdrop-blur-sm justify-between flex'>
         <h1 className='text-xl font-medium text-neutral-800'>Chattea con Yournal</h1>
         <Button

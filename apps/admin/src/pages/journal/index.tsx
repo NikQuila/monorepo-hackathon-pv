@@ -63,7 +63,7 @@ const JournalPage = () => {
 
   if (loading) {
     return (
-      <div className='mx-auto'>
+      <div className='mx-auto max-w-md'>
         <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
           <div className='w-full flex justify-between px-3'>
             {[...Array(7)].map((_, index) => (
@@ -83,7 +83,7 @@ const JournalPage = () => {
         <div className='px-3 pt-6 pb-40'>
           <div className='space-y-6'>
             <div className='relative'>
-              <div className='max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10'>
+              <div className='max-w-md mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10'>
                 <Skeleton className='h-4 w-16 mx-auto' /> {/* "Hoy" text */}
                 <Skeleton className='h-6 w-64 mx-auto' /> {/* Title */}
                 <Skeleton className='h-4 w-full' /> {/* Description */}
@@ -91,7 +91,7 @@ const JournalPage = () => {
               </div>
 
               {/* Background lines */}
-              <div className='fixed inset-0 top-28 mx-4 flex flex-col'>
+              <div className='fixed max-w-md inset-0 top-28 px-4 mx-auto flex flex-col'>
                 {Array(15)
                   .fill(null)
                   .map((_, i) => (

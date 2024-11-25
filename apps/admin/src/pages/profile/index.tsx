@@ -55,7 +55,7 @@ const ProfilePage = () => {
   const [dobetterHabits, setDobetterHabits] = useState<{ mensaje: string }[]>(
     []
   );
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadProfileData = async () => {
@@ -102,13 +102,12 @@ const ProfilePage = () => {
           />
         </div>
         <Skeleton className='h-12 w-64 mx-auto mb-4' />
-          <Skeleton className='h-12 w-full mx-6 mb-2' />
-          <Skeleton className='h-12 w-full mx-6 mb-2' />
-          <Skeleton className='h-12 w-full mx-6 mb-5' />
+        <Skeleton className='h-12 w-96 mx-6 mb-2' />
+        <Skeleton className='h-12 w-96 mx-6 mb-2' />
+        <Skeleton className='h-12 w-96 mx-6 mb-5' />
         <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] p-6'>
           <Skeleton className='h-6 w-24' />
 
-          {/* Recommendations Section Skeleton */}
           <div className='space-y-4'>
             <Skeleton className='h-6 w-32' />
             <div className='space-y-2'>
@@ -118,7 +117,6 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Good Habits Section Skeleton */}
           <div className='space-y-4'>
             <Skeleton className='h-6 w-32' />
             <div className='space-y-2'>
@@ -128,7 +126,6 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Improvement Areas Section Skeleton */}
           <div className='space-y-4'>
             <Skeleton className='h-6 w-32' />
             <div className='space-y-2'>
@@ -143,14 +140,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className='min-h-svh bg-[linear-gradient(180deg,#Fce6cf_0%,_#fbcffc_10%,_#CCd5ff_20%)]'>
-      {/* Heaer */}
+    <div className='min-h-svh h-full bg-[linear-gradient(180deg,#Fce6cf_0%,_#fbcffc_10%,_#CCd5ff_20%)]'>
       <div className='flex gap-2 items-center p-3 justify-between'>
-        <img
-          src='https://avatars.dicebear.com/api/avataaars/mati.svg'
-          alt='avatar'
-          className='size-7 rounded-full'
-        />
         <h1 className='font-bold text-sm w-full'>{userProfile?.name}</h1>
         <Button
           size='icon'
@@ -162,7 +153,6 @@ const ProfilePage = () => {
         </Button>
       </div>
 
-      {/* Mood Calendar */}
       {/*   <div className='flex px-2 py-3'>
         <div className='flex gap-2 justify-between rounded-2xl w-full bg-white px-4 py-3'>
           {daysOfWeek.map(({ day, emoji, color }, index) => (
@@ -180,7 +170,7 @@ const ProfilePage = () => {
           ))}
         </div>
       </div> */}
-      {/* Conversation Prompts */}
+
       <div onClick={() => setLocation("/chat")} className='flex flex-col items-center gap-4 relative mt-32 h-40'>
         <Ripple
           numCircles={3}

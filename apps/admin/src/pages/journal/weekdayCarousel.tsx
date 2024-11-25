@@ -20,52 +20,53 @@ const WeekdayCarousel = ({
   const getDayNumber = (date: DateTime) => date.toFormat("d");
 
   const getSelectedWeekIndex = (weeks: DateTime[][], selectedDate: DateTime) => {
-    return weeks.findIndex(week =>
-      week.some(day => day.hasSame(selectedDate, 'day'))
+    return weeks.findIndex((week) =>
+      week.some((day) => day.hasSame(selectedDate, "day"))
     );
   };
 
   const selectedWeekIndex = getSelectedWeekIndex(weeks, selectedDate);
 
   return (
-    <div className="relative w-full">
-      <Carousel
-        opts={{
-          startIndex: selectedWeekIndex,
-        }}
-      >
-        <CarouselContent>
-          {weeks.map((week, weekIndex) => (
-            <div
-              key={weekIndex}
-              className="flex justify-between w-full gap-2 px-4"
-            >
-              {week.map((day, index) => (
-                <CarouselItem
-                  key={index}
-                  className="basis-1/7 flex flex-col items-center gap-1.5"
+    <Carousel
+      className="w-full overflow-hidden mx-2"
+      opts={{
+        startIndex: selectedWeekIndex,
+        align: "center",
+        containScroll: "trimSnaps",
+      }}
+    >
+      <CarouselContent>
+        {weeks.map((week, weekIndex) => (
+          <CarouselItem
+            key={weekIndex}
+            className="flex basis-full flex-shrink-0 justify-between items-center gap-4"
+          >
+            {week.map((day, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center gap-1.5"
+              >
+                <span className="text-xs font-bold capitalize">
+                  {getDayName(day).charAt(0)}
+                </span>
+                <button
+                  onClick={() => handleDayClick(day)}
+                  className={`flex flex-col items-center justify-center size-7 rounded-full transition-colors ${
+                    day.hasSame(selectedDate, "day")
+                      ? "bg-neutral-900 text-white"
+                      : "text-neutral-400"
+                  }`}
                 >
-                  <span className="text-xs font-bold capitalize">
-                    {getDayName(day).split('')[0]}
-                  </span>
-                  <button
-                    onClick={() => handleDayClick(day)}
-                    className={`flex flex-col items-center justify-center size-7 rounded-full transition-colors ${
-                      day.hasSame(selectedDate, 'day')
-                        ? 'bg-neutral-900 text-white'
-                        : 'text-neutral-400'
-                    }`}
-                  >
-                    <span className="text-sm font-bold">{getDayNumber(day)}</span>
-                  </button>
-                </CarouselItem>
-              ))}
-            </div>
-          ))}
-        </CarouselContent>
-      </Carousel>
-    </div>
+                  <span className="text-sm font-bold">{getDayNumber(day)}</span>
+                </button>
+              </div>
+            ))}
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
   );
 };
 
-export default WeekdayCarousel;
+export default WeekdayCarousel
