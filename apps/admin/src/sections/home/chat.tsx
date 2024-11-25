@@ -159,19 +159,24 @@ export default function Chat() {
 
     setLoading(true);
     try {
+      // Generate unique file name for the audio
       const fileName = `audio_${Date.now()}.webm`;
+
+      // Upload the audio file to Supabase
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('audios')
         .upload(fileName, recordedAudio);
 
       if (uploadError) throw uploadError;
 
+      // Get the public URL for the uploaded file
       const { data: publicData } = supabase.storage
         .from('audios')
         .getPublicUrl(fileName);
 
       console.log('🚀 URL pública:', publicData.publicUrl);
 
+      // Create the payload to send
       const payload: MessagePayload = {
         type: 'audio',
         content: publicData.publicUrl,
@@ -179,16 +184,16 @@ export default function Chat() {
         user_id: userProfile?.id as string,
       };
 
-      // Option 2: Race condition
+      // Race between the fast response and regular response
       const fastResponseResult = await Promise.race([
         sendJournalFastResponse(payload),
         sendMessageOrAudio(payload),
       ]);
 
       console.log('fastResponseResult', fastResponseResult);
-      setFastResponse(fastResponseResult);
+      setFastResponse(fastResponseResult); // Only set this once
 
-      setFastResponse(fastResponseResult);
+      // Show success toast
       toast.success('¡Gracias por subir tu journal!');
     } catch (error) {
       console.error('Error submitting audio:', error);
@@ -198,6 +203,7 @@ export default function Chat() {
       setRecordedAudio(null);
     }
   };
+
 
   const handleSendMessage = async () => {
     if (message.trim()) {
@@ -251,15 +257,15 @@ export default function Chat() {
       {fastResponse ? (
         <FastResponseUI response={fastResponse} />
       ) : (
-        <div className='relative h-full w-full max-w-96 p-12 mb-16 justify-between flex items-center flex-col'>
-          <h1 className='z-0 text-2xl text-center font-normal'>
+        <div className='relative h-full w-full max-w-96 p-12 pt-3 mb-16 justify-between flex items-center flex-col'>
+          <h1 className='text-2xl text-center font-normal'>
             {isRecording
               ? 'Te escucho...'
               : recordedAudio
               ? 'Todo listo!'
               : 'Cuéntame algo'}
           </h1>
-          <div className="flex flex-col gap-24">
+          <div className="flex flex-col gap-32">
             <div className='flex flex-col items-center gap-4'>
               <button
                 onClick={handleToggleRecording}
@@ -286,7 +292,7 @@ export default function Chat() {
                   className={cn(
                     'absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-4 transition-all duration-200',
                     isRecording
-                      ? 'animate-ripple -mt-20'
+                      ? 'animate-ripple -mt-16'
                       : 'text-white top-0 left-0 -mt-16'
                   )}
                 >
@@ -352,7 +358,7 @@ export default function Chat() {
                         onClick={() => {
                           setRecordedAudio(null);
                           setAudioChunks([]);
-                          setFastResponse(null); // Clear fast response when re-recording
+                          setFastResponse(null);
                         }}
                         className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black w-full'
                       >
