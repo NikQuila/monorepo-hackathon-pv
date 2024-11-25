@@ -382,7 +382,7 @@ const getPastelColorFromEmoji = (emoji: string): string => {
 const FastResponseUI = ({ response }: { response: FastResponse }) => {
   const [, setLocation] = useLocation();
 
-  const pastelColor = getPastelColorFromEmoji(response.mood_emoji);
+  const pastelColor = getPastelColorFromEmoji(response?.mood_emoji || '');
 
   return (
     <div className='pt-24 px-8 pb-12 max-w-md mx-auto text-base text-center flex flex-col gap-8 justify-between h-full min-h-svh'>
