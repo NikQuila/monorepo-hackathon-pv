@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   Carousel,
   CarouselContent,
@@ -47,7 +48,12 @@ const WeekdayCarousel = ({
                 key={index}
                 className="flex flex-col items-center gap-1.5"
               >
-                <span className="text-xs font-bold capitalize">
+                <span className={cn(
+                  "text-xs font-bold capitalize",
+                  day.hasSame(selectedDate, "day")
+                  ? "text-neutral-900"
+                  : "text-neutral-400"
+                )}>
                   {getDayName(day).charAt(0)}
                 </span>
                 <button

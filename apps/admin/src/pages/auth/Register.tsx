@@ -52,7 +52,7 @@ export default function Register({ setView }: Props) {
   };
 
   return (
-    <form className='flex flex-col text-neutral-800 h-screen w-full *:w-full *:*:w-full p-12 pt-24 items-start justify-between'>
+    <form className='flex flex-col text-neutral-800 h-svh w-full *:w-full *:*:w-full p-12 pt-24 items-start justify-between'>
       <div className='flex flex-col items-center gap-12'>
         <div className='flex flex-col items-center gap-5'>
           <div className='flex items-center justify-center size-20'>

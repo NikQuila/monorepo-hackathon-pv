@@ -25,3 +25,11 @@
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%}
 }
+
+body {
+  @apply md:bg-brandgradient md:m-16;
+}
+
+/* #root {
+  @apply md:h-screen md:relative md:overflow-y-scroll md:max-w-md md:mx-auto md:rounded-2xl md:shadow-lg md:bg-white md:ring-white/20 md:max-h-[65vh] md:m-auto md:ring-2 md:ring-opacity-20;
+} */

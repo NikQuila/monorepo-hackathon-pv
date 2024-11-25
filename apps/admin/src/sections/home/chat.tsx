@@ -248,7 +248,7 @@ export default function Chat() {
         </div>
       ) : (
         <>
-          <div className='relative h-full min-h-screen w-full max-w-96 p-12 justify-between flex items-center flex-col'>
+          <div className='relative h-full min-h-svh w-full max-w-96 p-12 justify-between flex items-center flex-col'>
             <h1 className='z-0 text-2xl text-center font-normal'>
               {isRecording
                 ? 'Te escucho...'

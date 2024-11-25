@@ -28,7 +28,7 @@ export default function Login({ setView }: Props) {
   return (
     <form
       onSubmit={handleLogin}
-      className='flex flex-col text-neutral-800 h-screen w-full *:w-full p-12 pt-24 items-start justify-between'
+      className='flex flex-col text-neutral-800 h-svh w-full *:w-full p-12 pt-24 items-start justify-between'
     >
       <div className='flex flex-col items-center *:w-full gap-12'>
         <div className='flex flex-col items-center gap-5'>

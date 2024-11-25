@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@common/components/ui/button';
 import { Input } from '@common/components/ui/input';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@common/components/ui/card';
 import { updateUserProfile } from '@common/api/users';
 import { toast } from 'react-toastify';
 import useUserStore from '@/store/useUserStore';
 import BlurFade from '@common/components/ui/blur-fade';
+import LoadingMessages from '@common/components/ui/loading-messages';
 import { cn } from '@/lib/utils';
+import { ArrowLeft, X } from 'lucide-react';
+import { useLocation } from 'wouter';
 
 type Step = 'welcome' | 'name' | 'age' | 'job' | 'ready';
 
@@ -39,6 +36,7 @@ export default function Onboarding() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [currentStep, setCurrentStep] = useState<Step>('welcome');
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     if (currentStep === 'welcome') {
@@ -108,10 +106,19 @@ export default function Onboarding() {
     }
   };
 
+  const stepOrder: Step[] = ['welcome', 'name', 'age', 'job', 'ready'];
+
+  const handleBack = () => {
+    const currentIndex = stepOrder.indexOf(currentStep);
+    if (currentIndex > 2) {
+      setCurrentStep(stepOrder[currentIndex - 1]);
+    }
+  };
+
   const renderStepContent = () => {
     switch (currentStep) {
       case 'welcome':
-        return <></>;
+        return <div className="h-full my-auto"></div>;
       case 'name':
         return (
           <BlurFade delay={0.5} inView>
@@ -185,14 +192,24 @@ export default function Onboarding() {
     <form
       onSubmit={(e) => e.preventDefault()}
       className={cn(
-        'flex flex-col min-h-screen p-12 pb-24 pt-16',
-        'bg-brandgradient fixed inset-0 z-50',
-        currentStep === 'welcome'
-          ? 'justify-center items-center'
-          : 'items-start justify-between'
+        'flex flex-col min-h-screen px-4 text-neutral-500',
+        'bg-brandgradient fixed inset-0 z-50 max-w-md m-auto',
+        currentStep === 'welcome' && 'justify-center pt-12',
+        currentStep !== 'welcome' && 'pb-16',
+        currentStep === 'ready' && 'pb-32'
       )}
     >
-      <div className='w-full max-w-md mx-auto text-xl text-neutral-500 text-center flex flex-col gap-6'>
+      {(currentStep !== 'welcome' && currentStep !== 'name' && currentStep !== 'age') && (
+        <Button
+          onClick={() => handleBack()}
+          size='icon'
+          variant='ghost'
+          className="absolute [&_svg]:size-6 mt-3 mr-auto p-4 text-neutral-400"
+        >
+          <ArrowLeft />
+        </Button>
+        )}
+      <div className='flex flex-col flex-grow justify-center items-center w-full max-w-md mx-auto text-center gap-6'>
         <BlurFade delay={0.25}>
           {currentStep === 'welcome' && 'Hola, Soy Yournal'}
         </BlurFade>
@@ -208,7 +225,7 @@ export default function Onboarding() {
         <BlurFade delay={0.5} className='text-2xl text-neutral-800' inView>
           {currentStep === 'ready' && <></>}
         </BlurFade>
-        <div className='space-y-4'>
+        <div className='space-y-4 w-full'>
           <BlurFade delay={0.25} inView>
             {renderStepContent()}
           </BlurFade>
@@ -216,10 +233,11 @@ export default function Onboarding() {
           {error && <p className='text-center text-sm text-red-500'>{error}</p>}
         </div>
       </div>
+
       {currentStep !== 'welcome' && (
         <BlurFade
           delay={0.5}
-          className='max-w-xl mx-auto w-full fixed bottom-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'
+          className='w-full fixed bottom-4 left-0 right-0 px-4 md:relative md:bottom-auto'
           inView
         >
           <Button
@@ -228,7 +246,7 @@ export default function Onboarding() {
             className='w-full'
             disabled={loading}
           >
-            {loading ? 'Actualizando...' : 'Continuar'}
+            {loading ? <LoadingMessages /> : 'Continuar'}
           </Button>
         </BlurFade>
       )}

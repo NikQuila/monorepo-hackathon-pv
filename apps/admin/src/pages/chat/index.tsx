@@ -5,6 +5,15 @@ import { Textarea } from '@common/components/ui/textarea';
 import { getAiInsight } from '@common/api/chat';
 import useUserStore from '@/store/useUserStore';
 import { useLocation } from 'wouter';
+import LoadingMessages from '@common/components/ui/loading-messages';
+
+const loadingMessages = [
+  'Consulta a tu yo interior 🧠',
+  '¿Qué te preocupa? 🤔',
+  '¿Cómo te sientes? ✍️',
+  '¿Qué te gustaría saber? 📖',
+]
+
 interface Message {
   id: string;
   content: string;
@@ -62,19 +71,27 @@ const ChatPage = () => {
 
   return (
     <div className='fixed z-50 max-w-md mx-auto w-screen flex flex-col h-svh bg-brandgradient'>
-      <div className='items-center p-4 border-b bg-white/50 backdrop-blur-sm justify-between flex'>
-        <h1 className='text-xl font-medium text-neutral-800'>Chattea con Yournal</h1>
-        <Button
-          onClick={() => setLocation('/profile')}
-          size='icon'
-          variant='ghost'
-          className="[&_svg]:size-6 text-neutral-400"
-        >
-          <X />
-        </Button>
-      </div>
-
       <div className='flex-1 overflow-y-auto p-4 space-y-4'>
+        <div className="flex justify-end -m-1">
+          <Button
+            onClick={() => setLocation('/profile')}
+            size='icon'
+            variant='ghost'
+            className="[&_svg]:size-6 text-neutral-400"
+          >
+            <X />
+          </Button>
+        </div>
+        {!messages.length && (
+          <div className="mx-auto flex flex-col gap-6 animate-pulse h-full pb-24 text-neutral-500 text-sm text-center items-center justify-center">
+            <img src='/isotipo.svg' alt='Yournal' className='h-16 grayscale w-auto' />
+            <LoadingMessages
+              messages={loadingMessages}
+              interval={3000}
+            />
+            <p className="mt-4 max-w-56 text-balance text-center">Pregúntale a tus pensamientos, y consigue insights.</p>
+          </div>
+        )}
         {messages.map((message) => (
           <div
             key={message.id}
@@ -83,7 +100,7 @@ const ChatPage = () => {
             }`}
           >
             <div
-              className={`max-w-[80%] p-3 rounded-2xl ${
+              className={`max-w-[80%] p-3 rounded-2xl break-words ${
                 message.isUser
                   ? 'bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec] text-neutral-800'
                   : 'bg-neutral-200/40 text-neutral-700'
@@ -95,21 +112,20 @@ const ChatPage = () => {
         ))}
         {isLoading && (
           <div className='flex justify-start'>
-            <div className='bg-neutral-200/40 text-neutral-400 max-w-[80%] p-3 rounded-2xl'>
+            <div className='bg-neutral-200/40 animate-pulse text-neutral-400 max-w-[80%] p-3 rounded-2xl'>
               Escribiendo...
             </div>
           </div>
         )}
       </div>
 
-      {/* Input */}
-      <div className='p-4 border-t bg-white/50 backdrop-blur-sm'>
+      <div className='p-2 border-t bg-white/50 backdrop-blur-sm'>
         <div className='flex gap-2 max-w-3xl mx-auto'>
           <Textarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder='Escribe tu mensaje...'
-            className='resize-none h-12 bg-white/80'
+            className='resize-none pt-2.5 h-12 bg-white/80'
             rows={1}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -122,7 +138,7 @@ const ChatPage = () => {
             onClick={() => handleSendMessage(input)}
             disabled={isLoading || !input.trim()}
             size='icon'
-            className='size-12 aspect-square bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec] text-neutral-800 hover:opacity-90'
+            className='size-12 [&_svg]:size-5 aspect-square bg-gradient-to-br from-[rgb(251,205,156)] from-30% via-[#ebb6ec] to-[#b0bbec] text-neutral-800 hover:opacity-90'
           >
             <SendHorizontal />
           </Button>

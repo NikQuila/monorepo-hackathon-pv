@@ -4,7 +4,7 @@ import { Fragment } from 'react/jsx-runtime';
 import { Button } from '../ui/button';
 
 const navItems = [
-  { icon: Home, label: 'Home', href: '/profile' },
+  { icon: Home, label: 'Home', href: '/' },
   { icon: Notebook, label: 'Journal', href: '/journal' },
 ];
 
@@ -42,7 +42,7 @@ export function BottomNav() {
       </ul>
       <Button
         variant='primary'
-        onClick={() => setLocation('/')}
+        onClick={() => setLocation('/register')}
         className='bg-[linear-gradient(90deg,_#FCE6CF_15%,_#FBCFFC_50%,_#CCD5FF_85%)] shadow-none size-20 [&_svg]:size-11 [&_svg]:stroke-[1.5] absolute -translate-y-1/2 left-1/2 -translate-x-1/2 top-0'
       >
         <Plus />
