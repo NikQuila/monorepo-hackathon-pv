@@ -219,7 +219,7 @@ export default function Onboarding() {
       {currentStep !== 'welcome' && (
         <BlurFade
           delay={0.5}
-          className='w-full fixed bottom-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'
+          className='max-w-xl mx-auto w-full fixed bottom-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'
           inView
         >
           <Button

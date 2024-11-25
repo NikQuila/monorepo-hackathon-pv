@@ -14,7 +14,7 @@ const App = () => {
 
   return (
     <div
-      className="min-h-screen"
+      className="min-h-screen max-w-md mx-auto bg-red-500"
       style={{
         background: 'linear-gradient(135deg, #FEFAF5 15%, #FFFAFF 50%, #FAFBFF 85%)',
       }}
