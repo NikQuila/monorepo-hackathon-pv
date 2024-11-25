@@ -15,6 +15,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@common/components/ui/card';
+import LoadingMessages from '@common/components/ui/loading-messages';
+
+const loadingMessages = [
+  '¿Qué te gustaría compartir? 📝',
+  '¿Cómo te sientes? ✍️',
+  '¿Qué te preocupa? 🤔',
+  'Dime algo bueno que pasó hoy 🌟',
+]
 
 type MessagePayload = {
   type: 'text' | 'audio';
@@ -38,7 +46,7 @@ export default function Chat() {
   const [, setLocation] = useLocation();
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [isPaused, setIsPaused] = useState(false); // New state for paused
+  const [isPaused, setIsPaused] = useState(false);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [recordedAudio, setRecordedAudio] = useState<Blob | null>(null);
   const [loading, setLoading] = useState(false);
@@ -47,9 +55,8 @@ export default function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const getSupportedMimeType = () => {
-    // Prioritize formats that work well with OpenAI
     const types = [
-      'audio/webm', // Most compatible
+      'audio/webm',
       'audio/mp4',
       'audio/ogg',
       'audio/wav',
@@ -61,12 +68,11 @@ export default function Chat() {
       }
     }
 
-    // Fallback to mp4 for iOS
     if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
       return 'audio/mp4';
     }
 
-    return 'audio/webm'; // Default fallback
+    return 'audio/webm';
   };
 
   const startRecording = async () => {
@@ -153,19 +159,24 @@ export default function Chat() {
 
     setLoading(true);
     try {
+      // Generate unique file name for the audio
       const fileName = `audio_${Date.now()}.webm`;
+
+      // Upload the audio file to Supabase
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('audios')
         .upload(fileName, recordedAudio);
 
       if (uploadError) throw uploadError;
 
+      // Get the public URL for the uploaded file
       const { data: publicData } = supabase.storage
         .from('audios')
         .getPublicUrl(fileName);
 
       console.log('🚀 URL pública:', publicData.publicUrl);
 
+      // Create the payload to send
       const payload: MessagePayload = {
         type: 'audio',
         content: publicData.publicUrl,
@@ -173,16 +184,16 @@ export default function Chat() {
         user_id: userProfile?.id as string,
       };
 
-      // Option 2: Race condition
+      // Race between the fast response and regular response
       const fastResponseResult = await Promise.race([
         sendJournalFastResponse(payload),
         sendMessageOrAudio(payload),
       ]);
 
       console.log('fastResponseResult', fastResponseResult);
-      setFastResponse(fastResponseResult);
+      setFastResponse(fastResponseResult); // Only set this once
 
-      setFastResponse(fastResponseResult);
+      // Show success toast
       toast.success('¡Gracias por subir tu journal!');
     } catch (error) {
       console.error('Error submitting audio:', error);
@@ -192,6 +203,7 @@ export default function Chat() {
       setRecordedAudio(null);
     }
   };
+
 
   const handleSendMessage = async () => {
     if (message.trim()) {
@@ -233,7 +245,7 @@ export default function Chat() {
   };
 
   return (
-    <div className='flex flex-col items-center fixed inset-0 z-50 bg-brandgradient'>
+    <div className='flex flex-col items-center h-svh fixed inset-0 z-50 bg-brandgradient'>
       <Button
         onClick={() => setLocation('/journal')}
         size='icon'
@@ -243,19 +255,17 @@ export default function Chat() {
         <X />
       </Button>
       {fastResponse ? (
-        <div className='w-full animate-fade-in'>
-          <FastResponseUI response={fastResponse} />
-        </div>
+        <FastResponseUI response={fastResponse} />
       ) : (
-        <>
-          <div className='relative h-full min-h-screen w-full max-w-96 p-12 justify-between flex items-center flex-col'>
-            <h1 className='z-0 text-2xl text-center font-normal'>
-              {isRecording
-                ? 'Te escucho...'
-                : recordedAudio
-                ? 'Todo listo!'
-                : 'Cuéntame algo'}
-            </h1>
+        <div className='relative h-full w-full max-w-96 p-12 pt-3 mb-16 justify-between flex items-center flex-col'>
+          <h1 className='text-2xl text-center font-normal'>
+            {isRecording
+              ? 'Te escucho...'
+              : recordedAudio
+              ? 'Todo listo!'
+              : 'Cuéntame algo'}
+          </h1>
+          <div className="flex flex-col gap-32">
             <div className='flex flex-col items-center gap-4'>
               <button
                 onClick={handleToggleRecording}
@@ -280,9 +290,9 @@ export default function Chat() {
                 />
                 <div
                   className={cn(
-                    'absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-8 transition-all duration-200',
+                    'absolute z-50 [&_svg]:size-16 [&_svg]:stroke-1 rounded-full flex items-center justify-center size-full p-4 transition-all duration-200',
                     isRecording
-                      ? 'animate-ripple -mt-20'
+                      ? 'animate-ripple -mt-16'
                       : 'text-white top-0 left-0 -mt-16'
                   )}
                 >
@@ -290,71 +300,77 @@ export default function Chat() {
                 </div>
               </button>
             </div>
-
-            <div className='z-50 flex flex-col gap-3 w-full'>
-              {!recordedAudio && !isRecording ? (
-                <>
-                  <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto '>
-                    <div className='flex gap-4 text-base font-medium items-center h-7'>
-                      <div className='w-full h-px bg-neutral-200' />
-                      <p className='text-neutral-400 whitespace-nowrap font-normal'>
-                        o también
-                      </p>
-                      <div className='w-full h-px bg-neutral-200' />
-                    </div>
-                    {/* Envolver TextAreaDrawer en un div con pointer-events-auto */}
-                    <div className='relative z-[60] isolate'>
-                      <TextAreaDrawer
-                        message={message}
-                        setMessage={setMessage}
-                        handleSendMessage={handleSendMessage}
-                        disabled={loading}
-                      />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className='w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 md:px-12 md:relative md:bottom-auto'>
-                    <Button
-                      onClick={handleSubmitAudio}
-                      variant='primary'
-                      className='w-full flex gap-1.5'
-                      disabled={loading || !recordedAudio}
-                    >
-                      {loading ? 'Enviando...' : 'Continuar'}
-                      <ArrowRight />
-                    </Button>
-                    {recordedAudio && (
-                      <>
-                        <div className='flex gap-4 text-base font-medium items-center h-7'>
-                          <div className='w-full h-px bg-neutral-200' />
-                          <p className='text-neutral-400 whitespace-nowrap font-normal'>
-                            o también
-                          </p>
-                          <div className='w-full h-px bg-neutral-200' />
-                        </div>
-
-                        <Button
-                          size='lg'
-                          variant='secondary'
-                          onClick={() => {
-                            setRecordedAudio(null);
-                            setAudioChunks([]);
-                            setFastResponse(null); // Clear fast response when re-recording
-                          }}
-                          className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black w-full'
-                        >
-                          Intentar de nuevo
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+            {!isRecording && (
+              <div className="text-neutral-500">
+                <LoadingMessages
+                  messages={recordedAudio ? ['Listo! Continúa para ver tus resultados.'] : loadingMessages}
+                  interval={3000}
+                />
+              </div>
+            )}
           </div>
-        </>
+          <div className='z-50 flex flex-col gap-3 w-full'>
+            {!recordedAudio && !isRecording ? (
+              <>
+                <div className='max-w-md w-full fixed bottom-10 space-y-4 left-0 right-0 px-4 mx-auto'>
+                  <div className='flex gap-4 text-base font-medium items-center h-7'>
+                    <div className='w-full h-px bg-neutral-200' />
+                    <p className='text-neutral-400 whitespace-nowrap font-normal'>
+                      o también
+                    </p>
+                    <div className='w-full h-px bg-neutral-200' />
+                  </div>
+                  <div className='relative z-[60] isolate'>
+                    <TextAreaDrawer
+                      message={message}
+                      setMessage={setMessage}
+                      handleSendMessage={handleSendMessage}
+                      disabled={loading}
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className='w-full max-w-md fixed bottom-10 space-y-4 left-0 right-0 px-4 mx-auto'>
+                  <Button
+                    onClick={handleSubmitAudio}
+                    variant='primary'
+                    className='w-full flex gap-1.5'
+                    disabled={loading || !recordedAudio}
+                  >
+                    {loading ? 'Enviando...' : 'Continuar'}
+                    <ArrowRight />
+                  </Button>
+                  {recordedAudio && (
+                    <>
+                      <div className='flex gap-4 text-base font-medium items-center h-7'>
+                        <div className='w-full h-px bg-neutral-200' />
+                        <p className='text-neutral-400 whitespace-nowrap font-normal'>
+                          o también
+                        </p>
+                        <div className='w-full h-px bg-neutral-200' />
+                      </div>
+
+                      <Button
+                        size='lg'
+                        variant='secondary'
+                        onClick={() => {
+                          setRecordedAudio(null);
+                          setAudioChunks([]);
+                          setFastResponse(null);
+                        }}
+                        className='rounded-full text-base font-normal h-10 bg-neutral-200/40 !hover:bg-black w-full'
+                      >
+                        Intentar de nuevo
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );
@@ -385,7 +401,7 @@ const FastResponseUI = ({ response }: { response: FastResponse }) => {
   const pastelColor = getPastelColorFromEmoji(response?.mood_emoji || '');
 
   return (
-    <div className='pt-24 px-8 pb-12 max-w-md mx-auto text-base text-center flex flex-col gap-8 justify-between h-full min-h-svh'>
+    <div className='pt-24 px-8 pb-12 max-w-md w-full mx-auto text-base text-center flex flex-col gap-8 justify-between h-full min-h-svh'>
       <div className='flex flex-col gap-10'>
         <div className='flex flex-col gap-'>
           <div

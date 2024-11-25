@@ -1,11 +1,11 @@
 import { DateTime } from 'luxon';
-import { Card, CardContent } from '@common/components/ui/card';
-import { Skeleton } from '@common/components/ui/skeleton';
 import { useEffect, useState } from 'react';
 import { fetchJournalEntries } from '@common/api/journals';
-import { ScrollArea } from '@common/components/ui/scroll-area';
 import { Button } from '@common/components/ui/button';
+import WeekdayCarousel from './weekdayCarousel';
+import { ScrollArea } from '@common/components/ui/scroll-area';
 import useUserStore from '@/store/useUserStore';
+import { Skeleton } from '@common/components/ui/skeleton';
 
 const JournalPage = () => {
   const { userProfile } = useUserStore();
@@ -17,8 +17,10 @@ const JournalPage = () => {
   useEffect(() => {
     const loadEntries = async () => {
       setLoading(true);
-      const startDate = today.minus({ days: 3 });
-      const endDate = today.plus({ days: 3 });
+
+      const startDate = today.startOf("week").minus({ week: 1 });
+      const endDate = today.endOf("week").plus({ week: 1 });
+
       const data = await fetchJournalEntries(
         startDate,
         endDate,
@@ -29,37 +31,39 @@ const JournalPage = () => {
     };
 
     loadEntries();
-  }, []);
+  }, [userProfile]);
 
-  const getDayInitial = (date: DateTime) =>
-    date
-      .toLocaleString({ weekday: 'short' }, { locale: 'es' })
-      .charAt(0)
-      .toUpperCase();
+  const generateWeeks = (startDate: DateTime, endDate: DateTime): DateTime[][] => {
+    const weeks: DateTime[][] = [];
+    let current = startDate.startOf("week");
 
-  const getDate = (date: DateTime) => date.toFormat('d');
+    while (current <= endDate) {
+      weeks.push(
+        Array(7)
+          .fill(0)
+          .map((_, i) => current.plus({ days: i }))
+      );
+      current = current.plus({ weeks: 1 });
+    }
 
-  const weekDays = [
-    ...Array(3)
-      .fill(null)
-      .map((_, i) => today.minus({ days: 3 - i })),
-    today,
-    ...Array(3)
-      .fill(null)
-      .map((_, i) => today.plus({ days: i + 1 })),
-  ];
+    return weeks;
+  };
+
+  const startDate = today.startOf("month");
+  const endDate = today.endOf("month");
+  const weeks = generateWeeks(startDate, endDate);
 
   const handleDayClick = (date: DateTime) => {
     setSelectedDate(date);
   };
 
-  const formattedDate = selectedDate.toFormat('yyyy-MM-dd');
-  const entryContent =
-    entries[formattedDate] || 'No hay entrada para este día.';
+  const formattedDate = selectedDate.toFormat("yyyy-MM-dd");
+  const entryContent = entries[formattedDate] || "No hay entrada para este día.";
+
 
   if (loading) {
     return (
-      <div className='mx-auto'>
+      <div className='mx-auto max-w-md'>
         <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
           <div className='w-full flex justify-between px-3'>
             {[...Array(7)].map((_, index) => (
@@ -79,7 +83,7 @@ const JournalPage = () => {
         <div className='px-3 pt-6 pb-40'>
           <div className='space-y-6'>
             <div className='relative'>
-              <div className='max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10'>
+              <div className='max-w-md mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10'>
                 <Skeleton className='h-4 w-16 mx-auto' /> {/* "Hoy" text */}
                 <Skeleton className='h-6 w-64 mx-auto' /> {/* Title */}
                 <Skeleton className='h-4 w-full' /> {/* Description */}
@@ -87,7 +91,7 @@ const JournalPage = () => {
               </div>
 
               {/* Background lines */}
-              <div className='fixed inset-0 top-28 mx-4 flex flex-col'>
+              <div className='fixed max-w-md inset-0 top-28 px-4 mx-auto flex flex-col'>
                 {Array(15)
                   .fill(null)
                   .map((_, i) => (
@@ -109,23 +113,11 @@ const JournalPage = () => {
     <div className='mx-auto'>
       <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
         <div className='w-full flex justify-between px-3'>
-          {weekDays.map((day, index) => (
-            <div className='w-8 flex flex-col gap-1.5 items-center' key={index}>
-              <span className='text-[10px] font-bold'>
-                {getDayInitial(day)}
-              </span>
-              <button
-                onClick={() => handleDayClick(day)}
-                className={`flex flex-col gap-1.5 items-center justify-center size-7 rounded-full transition-colors ${
-                  day.hasSame(selectedDate, 'day')
-                    ? 'bg-neutral-900 text-white'
-                    : 'text-neutral-400'
-                }`}
-              >
-                <span className='text-sm font-bold'>{getDate(day)}</span>
-              </button>
-            </div>
-          ))}
+          <WeekdayCarousel
+            weeks={weeks}
+            selectedDate={selectedDate}
+            handleDayClick={handleDayClick}
+          />
         </div>
         <div className='text-xs font-medium text-neutral-400'>
           {selectedDate
@@ -161,7 +153,7 @@ const JournalPage = () => {
                     </a>
                   </Button>
                 </div>
-                <div className='fixed inset-0 top-28 mx-4 flex flex-col'>
+                <div className='fixed max-w-md px-2 mx-auto inset-0 top-28 flex flex-col'>
                   {Array(26)
                     .fill(null)
                     .map((_, i) => (
