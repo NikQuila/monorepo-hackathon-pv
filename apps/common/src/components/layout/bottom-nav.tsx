@@ -2,7 +2,6 @@ import { Link, useLocation } from 'wouter';
 import { Home, Notebook, Plus, MessageCircle } from 'lucide-react';
 import { Fragment } from 'react/jsx-runtime';
 import { Button } from '../ui/button';
-import { motion } from 'framer-motion';
 
 const navItems = [
   { icon: Home, label: 'Home', href: '/profile' },
@@ -14,12 +13,8 @@ export function BottomNav() {
   const middleIndex = Math.ceil(navItems.length / 2);
 
   return (
-    <motion.nav
-      className='fixed z-40 bottom-0 left-0 right-0 bg-white border-t border-gray-200'
-      initial={{ opacity: 0, y: 100 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 100 }}
-      transition={{ duration: 0.3 }}
+    <nav
+      className='fixed max-w-md mx-auto z-40 bottom-0 left-0 right-0 bg-white border-t border-gray-200'
     >
       <ul className='relative flex px-8 pb-3 justify-around'>
         {navItems.map((item, index) => {
@@ -52,6 +47,6 @@ export function BottomNav() {
       >
         <Plus />
       </Button>
-    </motion.nav>
+    </nav>
   );
 }
