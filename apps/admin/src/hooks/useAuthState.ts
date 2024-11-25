@@ -10,15 +10,21 @@ const useAuthState = () => {
   const { setUserProfile, userProfile } = useUserStore();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [, setLocation] = useLocation();
+  const [location, setLocation] = useLocation();
 
   useEffect(() => {
     const fetchProfile = async (userId: string, retries = 3) => {
       try {
+        const actualRoute = location;
+        console.log('actualRoute', actualRoute);
         const userData = await fetchUserProfile(userId);
         setUserProfile(userData);
 
-        if (userData && (!userData.name || !userData.age)) {
+        if (
+          userData &&
+          (!userData.name || !userData.age) &&
+          actualRoute !== '/onboarding'
+        ) {
           setLocation('/');
         }
       } catch (error) {
