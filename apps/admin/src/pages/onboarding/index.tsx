@@ -8,7 +8,6 @@ type Step = 'name' | 'chat';
 
 const RegisterAndCreateEntryPage = () => {
   const { userProfile } = useUserStore();
-  console.log(userProfile);
 
   if (userProfile?.name && userProfile?.age) {
     return <Chat />;
