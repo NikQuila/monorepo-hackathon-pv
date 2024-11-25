@@ -1,114 +1,195 @@
 import { DateTime } from 'luxon';
-import { Card, CardContent } from '@common/components/ui/card';
-import { useState } from 'react';
-
-const mockEntries: Record<string, string> = {
-  '2024-11-22': `Hoy fue uno de esos días en los que el tiempo parece moverse con calma, pero a la vez logré hacer más de lo que esperaba. Me desperté temprano y aproveché la mañana para trabajar en un proyecto personal que he estado postergando.
-
-Es increíble cómo, cuando me siento inspirado, las ideas fluyen casi sin esfuerzo. Dedicarle ese tiempo fue realmente gratificante.
-
-Por la tarde, salí a dar un paseo. El aire fresco y la tranquilidad del entorno me ayudaron a despejar la mente. Hay algo especial en caminar sin rumbo fijo, dejando que los pensamientos vayan y vengan sin presión.`,
-  '2024-11-21':
-    'Un día productivo en la oficina. Completé varios pendientes importantes.',
-  '2024-11-20':
-    'Cena familiar. Fue agradable reconectarnos después de tanto tiempo.',
-};
+import { useEffect, useState } from 'react';
+import { fetchJournalEntries } from '@common/api/journals';
+import { Button } from '@common/components/ui/button';
+import WeekdayCarousel from './weekdayCarousel';
+import { ScrollArea } from '@common/components/ui/scroll-area';
+import useUserStore from '@/store/useUserStore';
+import { Skeleton } from '@common/components/ui/skeleton';
 
 const JournalPage = () => {
+  const { userProfile } = useUserStore();
   const today = DateTime.now();
   const [selectedDate, setSelectedDate] = useState(today);
+  const [entries, setEntries] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
 
-  const getDayInitial = (date: DateTime) =>
-    date
-      .toLocaleString({ weekday: 'short' }, { locale: 'es' })
-      .charAt(0)
-      .toUpperCase();
+  useEffect(() => {
+    const loadEntries = async () => {
+      setLoading(true);
 
-  const getDate = (date: DateTime) => date.toFormat('d');
+      const startDate = today.startOf("week").minus({ week: 1 });
+      const endDate = today.endOf("week").plus({ week: 1 });
 
-  const weekDays = [
-    ...Array(3)
-      .fill(null)
-      .map((_, i) => today.minus({ days: 3 - i })),
-    today,
-    ...Array(3)
-      .fill(null)
-      .map((_, i) => today.plus({ days: i + 1 })),
-  ];
+      const data = await fetchJournalEntries(
+        startDate,
+        endDate,
+        userProfile?.id as string
+      );
+      setEntries(data);
+      setLoading(false);
+    };
+
+    loadEntries();
+  }, [userProfile]);
+
+  const generateWeeks = (startDate: DateTime, endDate: DateTime): DateTime[][] => {
+    const weeks: DateTime[][] = [];
+    let current = startDate.startOf("week");
+
+    while (current <= endDate) {
+      weeks.push(
+        Array(7)
+          .fill(0)
+          .map((_, i) => current.plus({ days: i }))
+      );
+      current = current.plus({ weeks: 1 });
+    }
+
+    return weeks;
+  };
+
+  const startDate = today.startOf("month");
+  const endDate = today.endOf("month");
+  const weeks = generateWeeks(startDate, endDate);
 
   const handleDayClick = (date: DateTime) => {
     setSelectedDate(date);
   };
 
-  const formattedDate = selectedDate.toFormat('yyyy-MM-dd');
-  const entryContent =
-    mockEntries[formattedDate] || 'No hay entrada para este día.';
+  const formattedDate = selectedDate.toFormat("yyyy-MM-dd");
+  const entryContent = entries[formattedDate] || "No hay entrada para este día.";
 
-  return (
-    <div className='max-w-2xl mx-auto p-4 space-y-6'>
-      {/* Week Calendar Strip */}
-      <div className='flex justify-between items-center bg-slate-50 p-4 rounded-xl'>
-        {weekDays.map((day, index) => (
-          <button
-            key={index}
-            onClick={() => handleDayClick(day)}
-            className={`flex flex-col items-center justify-center w-14 h-14 rounded-full transition-colors ${
-              day.hasSame(selectedDate, 'day')
-                ? 'bg-black text-white'
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-          >
-            <span className='text-xs font-medium'>{getDayInitial(day)}</span>
-            <span className='text-lg'>{getDate(day)}</span>
-          </button>
-        ))}
-      </div>
 
-      {/* Journal Entry Area */}
-      {/* Journal Entry Area */}
-      <Card className='bg-white shadow-sm'>
-        <CardContent className='p-6'>
-          <div className='space-y-6'>
-            <div className='text-sm text-gray-500'>
-              {selectedDate
-                .toLocaleString(
-                  {
-                    weekday: 'long',
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric',
-                  },
-                  { locale: 'es' }
-                )
-                .toUpperCase()}
-            </div>
-            <div className='relative'>
-              {/* Líneas de fondo */}
+  if (loading) {
+    return (
+      <div className='mx-auto max-w-md'>
+        <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
+          <div className='w-full flex justify-between px-3'>
+            {[...Array(7)].map((_, index) => (
               <div
-                className='absolute inset-0 flex flex-col'
-                style={{ marginTop: '1.5rem' }}
+                className='w-8 flex flex-col gap-1.5 items-center'
+                key={index}
               >
+                <Skeleton className='h-3 w-3' />
+                <Skeleton className='size-7 rounded-full' />
+              </div>
+            ))}
+          </div>
+          <Skeleton className='h-4 w-48' />
+        </div>
+
+        {/* Content Area Skeleton */}
+        <div className='px-3 pt-6 pb-40'>
+          <div className='space-y-6'>
+            <div className='relative'>
+              <div className='max-w-md mx-auto fixed top-1/2 -translate-y-1/2 inset-x-6 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-8 pt-12 pb-10'>
+                <Skeleton className='h-4 w-16 mx-auto' /> {/* "Hoy" text */}
+                <Skeleton className='h-6 w-64 mx-auto' /> {/* Title */}
+                <Skeleton className='h-4 w-full' /> {/* Description */}
+                <Skeleton className='h-10 w-full mt-3' /> {/* Button */}
+              </div>
+
+              {/* Background lines */}
+              <div className='fixed max-w-md inset-0 top-28 px-4 mx-auto flex flex-col'>
                 {Array(15)
                   .fill(null)
                   .map((_, i) => (
                     <div
                       key={i}
-                      className='border-b border-slate-100'
+                      className='border-b border-neutral-200/60'
                       style={{ height: '2rem' }}
                     />
                   ))}
               </div>
-              {/* Contenido */}
-              <div
-                className='relative whitespace-pre-wrap text-gray-700 leading-8'
-                style={{ minHeight: '30rem' }}
-              >
-                {entryContent}
-              </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className='mx-auto'>
+      <div className='sticky top-0 z-10 flex flex-col gap-4 justify-between items-center bg-neutral-100 py-4'>
+        <div className='w-full flex justify-between px-3'>
+          <WeekdayCarousel
+            weeks={weeks}
+            selectedDate={selectedDate}
+            handleDayClick={handleDayClick}
+          />
+        </div>
+        <div className='text-xs font-medium text-neutral-400'>
+          {selectedDate
+            .toLocaleString(
+              {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+              },
+              { locale: 'es' }
+            )
+            .toUpperCase()}
+        </div>
+      </div>
+
+      <ScrollArea className='px-3 pt-6 pb-40'>
+        <div className='space-y-6'>
+          <div className='relative'>
+            {entryContent === 'No hay entrada para este día.' ? (
+              <>
+                <div className='max-w-96 mx-auto fixed top-1/2 -translate-y-1/2 inset-x-3 text-center flex flex-col gap-3 z-10 bg-neutral-100 rounded-3xl px-4 pt-12 pb-10'>
+                  <h1 className='text-xl font-semibold text-neutral-900'>
+                    No has escrito nada todavía.
+                  </h1>
+                  <p className='text-base text-neutral-600'>
+                    Cuéntanos sobre algo para poder entender mejor cómo
+                    ayudarte.
+                  </p>
+                  <Button variant='primary' className='mt-3'>
+                    <a href="/">
+                      Cuéntame algo
+                    </a>
+                  </Button>
+                </div>
+                <div className='fixed max-w-md px-2 mx-auto inset-0 top-28 flex flex-col'>
+                  {Array(26)
+                    .fill(null)
+                    .map((_, i) => (
+                      <div
+                        key={i}
+                        className='border-b border-neutral-200/60'
+                        style={{ height: '2rem' }}
+                      />
+                    ))}
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  className='relative whitespace-pre-wrap text-neutral-700 leading-8'
+                  style={{ minHeight: '30rem' }}
+                >
+                  {entryContent.replace(/-/g, '')}
+                </div>
+              </>
+            )}
+            <div className='bg-gradient-to-t from-white to-transparent w-screen h-24 fixed bottom-16 inset-x-0 z-10' />
+            <div className='absolute inset-0 flex flex-col -mt-0.5'>
+              {Array(15)
+                .fill(null)
+                .map((_, i) => (
+                  <div
+                    key={i}
+                    className='border-b border-neutral-200/60'
+                    style={{ height: '2rem' }}
+                  />
+                ))}
+            </div>
+          </div>
+        </div>
+      </ScrollArea>
     </div>
   );
 };

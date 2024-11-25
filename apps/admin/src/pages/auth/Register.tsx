@@ -1,82 +1,145 @@
-import '../../index.css';
-import { useState } from 'react';
+import { useState, SetStateAction } from 'react';
+import { Input } from '@common/components/ui/input';
+import { Label } from '@common/components/ui/label';
+import { Button } from '@common/components/ui/button';
 import {
   registerWithEmailAndPassword,
   createUserProfile,
 } from 'common/src/api/auth';
+import BlurFade from '@common/components/ui/blur-fade';
+import { useLocation } from 'wouter';
 
 type Props = {
   setView: (view: 'login' | 'register') => void;
 };
 
 export default function Register({ setView }: Props) {
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [, setLocation] = useLocation();
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError('');
     setLoading(true);
-    if (password !== confirmPassword) {
-      setError('Passwords do not match');
+
+    if (password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres');
       setLoading(false);
       return;
     }
+
+    if (!email.includes('@')) {
+      setError('El email no es válido');
+      setLoading(false);
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      setLoading(false);
+      return;
+    }
+
     try {
       const user = await registerWithEmailAndPassword(email, password);
+
       if (user) {
+        setLocation('/onboarding');
         await createUserProfile({ ...user });
       }
     } catch (error) {
-      setError('Error registering user');
+      setError('Este usuario ya existe, por favor trata con otro email');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
+
   return (
-    <div className='flex h-screen w-full items-center justify-center bg-gray-200'>
-      <div className='w-full max-w-[400px] rounded-lg bg-white p-8 shadow'>
-        <h2 className='text-center text-2xl font-bold'>Register</h2>
-        <div className='mt-4'>
-          <input
-            type='email'
-            placeholder='Email'
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className='mt-2 w-full rounded border border-gray-300 p-2'
-          />
-          <input
-            type='password'
-            placeholder='Password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className='mt-2 w-full rounded border border-gray-300 p-2'
-          />
-          <input
-            type='password'
-            placeholder='Confirm Password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className='mt-2 w-full rounded border border-gray-300 p-2'
-          />
-          {error && <p className='mt-2 text-red-500'>{error}</p>}
-          <button
-            onClick={handleRegister}
-            className='mt-4 w-full rounded bg-blue-500 p-2 text-white'
-            disabled={loading}
-          >
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-          <p className='mt-4 text-center'>
-            Already have an account?{' '}
-            <button className='text-blue-500' onClick={() => setView('login')}>
-              Log in
-            </button>
-          </p>
+    <form onSubmit={handleRegister} className='flex flex-col text-neutral-800 min-h-svh w-full *:w-full *:*:w-full p-12 px-8 items-start justify-between'>
+      <div className='flex flex-col items-center gap-12'>
+        <BlurFade>
+          <div className='flex flex-col items-center gap-5'>
+            <div className='flex items-center justify-center size-20'>
+              <img src='/isotipo.svg' alt='yournal' className='h-12 w-auto' />
+            </div>
+            <h2 className='text-2xl font-medium'>Regístrate en Yournal</h2>
+          </div>
+        </BlurFade>
+
+        <div className='space-y-8 max-w-96'>
+          <BlurFade delay={0.15}>
+            <div className='space-y-2'>
+              <Label htmlFor='email'>Email</Label>
+              <Input
+                id='email'
+                value={email}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setEmail(e.target.value)
+                }
+                className='border-transparent bg-neutral-200/30 shadow-none'
+                placeholder='m@yournal.com'
+                type='email'
+              />
+            </div>
+          </BlurFade>
+
+          <BlurFade delay={0.3}>
+            <div className='space-y-2'>
+              <Label htmlFor='password'>Contraseña</Label>
+              <Input
+                id='password'
+                value={password}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setPassword(e.target.value)
+                }
+                className='border-transparent bg-neutral-200/30 shadow-none'
+                placeholder='********'
+                type='password'
+              />
+            </div>
+          </BlurFade>
+
+          <BlurFade delay={0.45}>
+            <div className='space-y-2'>
+              <Label htmlFor='confirm-password'>Confirmar Contraseña</Label>
+              <Input
+                id='confirm-password'
+                value={confirmPassword}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setConfirmPassword(e.target.value)
+                }
+                className='border-transparent bg-neutral-200/30 shadow-none'
+                placeholder='********'
+                type='password'
+              />
+            </div>
+          </BlurFade>
+
+          {error && (
+            <p className='text-red-500/80 text-sm font-medium'>⚠️ {error}</p>
+          )}
         </div>
       </div>
-    </div>
+
+      <div className='mt-8 flex flex-col gap-4 max-w-96 mx-auto'>
+        <Button type="submit" disabled={loading} variant='primary'>
+          {loading ? 'Registrando...' : 'Registrarse'}
+        </Button>
+        <p className='text-center text-sm text-gray-400 h-10 flex gap-1.5 justify-center items-center'>
+          Ya tienes una cuenta?{' '}
+          <button
+            onClick={() => setView('login')}
+            className='font-medium text-neutral-800 underline hover:text-neutral-800/80'
+          >
+            Inicia sesión
+          </button>
+        </p>
+      </div>
+    </form>
   );
 }

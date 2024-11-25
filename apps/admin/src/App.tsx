@@ -3,7 +3,7 @@ import { ToastContainer } from 'react-toastify';
 import RoutesConfig from './routes';
 import useAuthState from './hooks/useAuthState';
 import AuthPage from './pages/auth';
-import { BottomNav } from '@common/components/bottom-nav';
+import { BottomNav } from 'common/src/components/layout/bottom-nav';
 
 const App = () => {
   const { session, loading } = useAuthState();
@@ -13,9 +13,13 @@ const App = () => {
   if (!session) return <AuthPage />;
 
   return (
-    <div className='min-h-screen'>
-      <ToastContainer />
-      <main className=''>
+    <div
+      className="min-h-svh md:min-h-0 max-w-md mx-auto"
+      style={{
+        background: 'linear-gradient(135deg, #FEFAF5 15%, #FFFAFF 50%, #FAFBFF 85%)',
+      }}
+    >
+      <main>
         <RoutesConfig />
       </main>
       <BottomNav />
