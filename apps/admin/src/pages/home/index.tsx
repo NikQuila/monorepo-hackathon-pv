@@ -86,9 +86,8 @@ const HomePage = () => {
 
   if (loading) {
     return (
-      <div className='min-h-svh bg-[linear-gradient(90deg,_#FFFBFB_0%,_#FCE4CB_25%,_#FCDDFD_50%,_#D9E0FF_75%,_#F2F4FF_100%)]'>
-        <div className='flex gap-2 items-center p-3 justify-between'>
-          <Skeleton className='size-7 rounded-full' />
+      <div className='bg-[linear-gradient(90deg,_#FFFBFB_0%,_#FCE4CB_25%,_#FCDDFD_50%,_#D9E0FF_75%,_#F2F4FF_100%)]'>
+        <div className='flex gap-2 items-center p-3 justify-end'>
           <Skeleton className='size-8 rounded-lg shrink-0' />
         </div>
 
@@ -102,9 +101,9 @@ const HomePage = () => {
           />
         </div>
         <Skeleton className='h-12 w-64 mx-auto mb-4' />
-        <Skeleton className='h-12 w-96 mx-6 mb-2' />
-        <Skeleton className='h-12 w-96 mx-6 mb-2' />
-        <Skeleton className='h-12 w-96 mx-6 mb-5' />
+        <Skeleton className='h-12 w-80 mx-auto mb-2' />
+        <Skeleton className='h-12 w-80 mx-auto mb-2' />
+        <Skeleton className='h-12 w-80 mx-auto mb-5' />
         <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] p-6'>
           <Skeleton className='h-6 w-24' />
 

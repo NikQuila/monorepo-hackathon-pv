@@ -74,7 +74,7 @@ const ChatPage = () => {
       <div className='flex-1 overflow-y-auto p-4 space-y-4'>
         <div className="flex justify-end -m-1">
           <Button
-            onClick={() => setLocation('/profile')}
+            onClick={() => setLocation('/')}
             size='icon'
             variant='ghost'
             className="[&_svg]:size-6 text-neutral-400"
@@ -83,13 +83,13 @@ const ChatPage = () => {
           </Button>
         </div>
         {!messages.length && (
-          <div className="mx-auto flex flex-col gap-6 animate-pulse h-full pb-24 text-neutral-500 text-sm text-center items-center justify-center">
+          <div className="mx-auto flex flex-col gap-8 animate-pulse h-full pb-24 text-neutral-500 text-sm text-center items-center justify-center">
             <img src='/isotipo.svg' alt='Yournal' className='h-16 grayscale w-auto' />
             <LoadingMessages
               messages={loadingMessages}
               interval={3000}
             />
-            <p className="mt-4 max-w-56 text-balance text-center">Pregúntale a tus pensamientos, y consigue insights.</p>
+            <p className="-mt-2 max-w-56 text-balance text-center">Pregúntale a tus pensamientos, y consigue insights.</p>
           </div>
         )}
         {messages.map((message) => (

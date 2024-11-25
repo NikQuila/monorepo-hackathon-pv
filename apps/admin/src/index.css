@@ -27,9 +27,28 @@
 }
 
 body {
-  @apply md:bg-brandgradient md:m-16;
+  /* For Firefox */
+  scrollbar-width: thin; /* Makes the scrollbar narrower */
+  scrollbar-color: #aaa transparent; /* Custom scrollbar colors */
+
+  /* For WebKit browsers */
+  /* Thin scrollbar */
 }
 
-/* #root {
-  @apply md:h-screen md:relative md:overflow-y-scroll md:max-w-md md:mx-auto md:rounded-2xl md:shadow-lg md:bg-white md:ring-white/20 md:max-h-[65vh] md:m-auto md:ring-2 md:ring-opacity-20;
-} */
+body::-webkit-scrollbar {
+  width: 6px; /* Thin scrollbar width */
+  height: 6px; /* Thin scrollbar height for horizontal scroll */
+}
+
+body::-webkit-scrollbar-thumb {
+  background: #aaa; /* Color of the scrollbar thumb */
+  border-radius: 4px; /* Rounded edges */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  background: #888; /* Darker on hover */
+}
+
+body::-webkit-scrollbar-track {
+  background: transparent; /* Background color of the scrollbar track */
+}

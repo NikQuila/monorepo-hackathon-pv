@@ -6,6 +6,7 @@ import {
   registerWithEmailAndPassword,
   createUserProfile,
 } from 'common/src/api/auth';
+import BlurFade from '@common/components/ui/blur-fade';
 
 type Props = {
   setView: (view: 'login' | 'register') => void;
@@ -18,7 +19,8 @@ export default function Register({ setView }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const handleRegister = async () => {
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError('');
     setLoading(true);
     if (password.length < 8) {
@@ -52,57 +54,65 @@ export default function Register({ setView }: Props) {
   };
 
   return (
-    <form className='flex flex-col text-neutral-800 h-svh w-full *:w-full *:*:w-full p-12 pt-24 items-start justify-between'>
+    <form onSubmit={handleRegister} className='flex flex-col text-neutral-800 h-svh w-full *:w-full *:*:w-full p-12 pt-24 items-start justify-between'>
       <div className='flex flex-col items-center gap-12'>
-        <div className='flex flex-col items-center gap-5'>
-          <div className='flex items-center justify-center size-20'>
-            <img src='/isotipo.svg' alt='yournal' className='h-12 w-auto' />
+        <BlurFade>
+          <div className='flex flex-col items-center gap-5'>
+            <div className='flex items-center justify-center size-20'>
+              <img src='/isotipo.svg' alt='yournal' className='h-12 w-auto' />
+            </div>
+            <h2 className='text-2xl font-medium'>Regístrate en Yournal</h2>
           </div>
-          <h2 className='text-2xl font-medium'>Regístrate en Yournal</h2>
-        </div>
+        </BlurFade>
 
         <div className='space-y-8 max-w-96'>
-          <div className='space-y-2'>
-            <Label htmlFor='email'>Email</Label>
-            <Input
-              id='email'
-              value={email}
-              onChange={(e: { target: { value: SetStateAction<string> } }) =>
-                setEmail(e.target.value)
-              }
-              className='border-transparent bg-neutral-200/30 shadow-none'
-              placeholder='m@yournal.com'
-              type='email'
-            />
-          </div>
+          <BlurFade delay={0.15}>
+            <div className='space-y-2'>
+              <Label htmlFor='email'>Email</Label>
+              <Input
+                id='email'
+                value={email}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setEmail(e.target.value)
+                }
+                className='border-transparent bg-neutral-200/30 shadow-none'
+                placeholder='m@yournal.com'
+                type='email'
+              />
+            </div>
+          </BlurFade>
 
-          <div className='space-y-2'>
-            <Label htmlFor='password'>Contraseña</Label>
-            <Input
-              id='password'
-              value={password}
-              onChange={(e: { target: { value: SetStateAction<string> } }) =>
-                setPassword(e.target.value)
-              }
-              className='border-transparent bg-neutral-200/30 shadow-none'
-              placeholder='********'
-              type='password'
-            />
-          </div>
+          <BlurFade delay={0.3}>
+            <div className='space-y-2'>
+              <Label htmlFor='password'>Contraseña</Label>
+              <Input
+                id='password'
+                value={password}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setPassword(e.target.value)
+                }
+                className='border-transparent bg-neutral-200/30 shadow-none'
+                placeholder='********'
+                type='password'
+              />
+            </div>
+          </BlurFade>
 
-          <div className='space-y-2'>
-            <Label htmlFor='confirm-password'>Confirmar Contraseña</Label>
-            <Input
-              id='confirm-password'
-              value={confirmPassword}
-              onChange={(e: { target: { value: SetStateAction<string> } }) =>
-                setConfirmPassword(e.target.value)
-              }
-              className='border-transparent bg-neutral-200/30 shadow-none'
-              placeholder='********'
-              type='password'
-            />
-          </div>
+          <BlurFade delay={0.45}>
+            <div className='space-y-2'>
+              <Label htmlFor='confirm-password'>Confirmar Contraseña</Label>
+              <Input
+                id='confirm-password'
+                value={confirmPassword}
+                onChange={(e: { target: { value: SetStateAction<string> } }) =>
+                  setConfirmPassword(e.target.value)
+                }
+                className='border-transparent bg-neutral-200/30 shadow-none'
+                placeholder='********'
+                type='password'
+              />
+            </div>
+          </BlurFade>
 
           {error && (
             <p className='text-red-500/80 text-sm font-medium'>⚠️ {error}</p>
