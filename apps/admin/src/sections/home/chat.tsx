@@ -9,12 +9,6 @@ import Ripple from '@common/components/ui/ripple';
 import { TextAreaDrawer } from '@common/components/text-area-drawer';
 import { cn } from '@/lib/utils';
 import useUserStore from '@/store/useUserStore';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@common/components/ui/card';
 import LoadingMessages from '@common/components/ui/loading-messages';
 
 const loadingMessages = [

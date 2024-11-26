@@ -16,6 +16,7 @@ import {
 import { Skeleton } from '@common/components/ui/skeleton';
 import Ripple from '@common/components/ui/ripple';
 import { cn } from '@/lib/utils';
+import HelpStepper from './help-stepper';
 
 const icons = [Pen, Mic, Book, Star];
 
@@ -141,11 +142,11 @@ const HomePage = () => {
   return (
     <div className='bg-[linear-gradient(180deg,#Fce6cf_0%,_#fbcffc_10%,_#CCd5ff_20%)]'>
       <div className='z-50 top-0 inset-0 flex gap-2 items-center p-3 justify-between'>
-        <h1 className='font-bold text-sm w-full'>{userProfile?.name}</h1>
+        <HelpStepper />
         <Button
           size='icon'
           variant='ghost'
-          className='shrink-0 [&_svg]:size-5 hover:bg-transparent'
+          className='shrink-0 [&_svg]:size-5 hover:bg-transparent text-black/40'
           onClick={signOut}
         >
           <LogOut />
