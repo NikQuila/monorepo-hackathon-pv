@@ -43,20 +43,31 @@ export function TextAreaDrawer({
         </Button>
       </DrawerTrigger>
       <DrawerContent>
-        <form className='mx-auto w-full max-w-sm' onSubmit={handleSubmit}>
+        <form className='mx-auto p-2 w-full max-w-sm items-center flex flex-col' onSubmit={handleSubmit}>
           <DrawerHeader>
             <DrawerTitle>Escribe tu mensaje</DrawerTitle>
           </DrawerHeader>
-          <div className='p-4 pb-8'>
+          <div className='relative pb-4 w-full'>
             <Textarea
               placeholder='Escribe aquí...'
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               disabled={disabled}
-              className='min-h-[70svh]'
+              className='min-h-[70svh] leading-6 border-0 placeholder:text-neutral-500 z-40 pointer-events-auto focus-visible:ring-neutral-200/80'
             />
+            <div className='absolute inset-0 flex flex-col mt-[7px] select-none pointer-events-none'>
+              {Array(20)
+                .fill(null)
+                .map((_, i) => (
+                  <div
+                    key={i}
+                    className='border-b border-neutral-200/60'
+                    style={{ height: '2rem' }}
+                  />
+                ))}
+            </div>
           </div>
-          <Button disabled={disabled} className='w-full' type='submit'>
+          <Button disabled={disabled} className='px-8 w-full' variant="primary" type='submit'>
             {disabled ? 'Enviando...' : 'Enviar'}
           </Button>
         </form>
