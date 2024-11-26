@@ -30,11 +30,11 @@ const icons = [Pen, Mic, Book, Star];
 
 const conversationPrompts = [
   {
-    text: '¿Qué cosas me hacen bien?',
+    text: '¿Qué cosas me hacen feliz?',
     color: 'bg-[#FCE4CB]',
   },
   {
-    text: '¿Qué cosas me hacen mal?',
+    text: '¿Qué cosas me hacen triste?',
     color: 'bg-[#FCDDFD]',
   },
   {

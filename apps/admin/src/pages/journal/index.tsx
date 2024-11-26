@@ -148,7 +148,7 @@ const JournalPage = () => {
                     ayudarte.
                   </p>
                   <Button variant='primary' className='mt-3'>
-                    <a href="/">
+                    <a href="/onboarding">
                       Cuéntame algo
                     </a>
                   </Button>
