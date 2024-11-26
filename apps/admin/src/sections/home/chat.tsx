@@ -16,7 +16,7 @@ const loadingMessages = [
   '¿Cómo te sientes? ✍️',
   '¿Qué te preocupa? 🤔',
   'Dime algo bueno que pasó hoy 🌟',
-]
+];
 
 type MessagePayload = {
   type: 'text' | 'audio';
@@ -49,12 +49,7 @@ export default function Chat() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   const getSupportedMimeType = () => {
-    const types = [
-      'audio/webm',
-      'audio/mp4',
-      'audio/ogg',
-      'audio/wav',
-    ];
+    const types = ['audio/webm', 'audio/mp4', 'audio/ogg', 'audio/wav'];
 
     for (const type of types) {
       if (MediaRecorder.isTypeSupported(type)) {
@@ -198,7 +193,6 @@ export default function Chat() {
     }
   };
 
-
   const handleSendMessage = async () => {
     if (message.trim()) {
       setLoading(true);
@@ -244,7 +238,7 @@ export default function Chat() {
         onClick={() => setLocation('/journal')}
         size='icon'
         variant='ghost'
-        className="[&_svg]:size-6 m-3 ml-auto p-4 text-neutral-400"
+        className='[&_svg]:size-6 m-3 ml-auto p-4 text-neutral-400'
       >
         <X />
       </Button>
@@ -259,7 +253,7 @@ export default function Chat() {
               ? 'Todo listo!'
               : 'Cuéntame algo'}
           </h1>
-          <div className="flex flex-col gap-32">
+          <div className='flex flex-col gap-32'>
             <div className='flex flex-col items-center gap-4'>
               <button
                 onClick={handleToggleRecording}
@@ -295,9 +289,13 @@ export default function Chat() {
               </button>
             </div>
             {!isRecording && (
-              <div className="text-neutral-500">
+              <div className='text-neutral-500'>
                 <LoadingMessages
-                  messages={recordedAudio ? ['Listo! Continúa para ver tus resultados.'] : loadingMessages}
+                  messages={
+                    recordedAudio
+                      ? ['Listo! Continúa para ver tus resultados.']
+                      : loadingMessages
+                  }
                   interval={3000}
                 />
               </div>
@@ -392,59 +390,73 @@ const getPastelColorFromEmoji = (emoji: string): string => {
 const FastResponseUI = ({ response }: { response: FastResponse }) => {
   const [, setLocation] = useLocation();
 
-  const pastelColor = getPastelColorFromEmoji(response?.mood_emoji || '');
+  // Add error handling for missing response
+  if (!response) {
+    return null;
+  }
 
-  return (
-    <div className='pt-24 px-8 pb-12 max-w-md w-full mx-auto text-base text-center flex flex-col gap-8 justify-between h-full min-h-svh'>
-      <div className='flex flex-col gap-10'>
-        <div className='flex flex-col gap-'>
-          <div
-            className='mb-3 flex text-5xl aspect-square rounded-full size-20 mx-auto items-center justify-center'
-            style={{ backgroundColor: pastelColor }}
-          >
-            {response.mood_emoji}
-          </div>
-          <h5 className='mt-2 text-2xl font-medium text-neutral-800'>
-            {response.title}
-          </h5>
-          <p className='mt-2 text-base tracking-tight text-neutral-400 font-normal'>
-            {response.description}
-          </p>
-        </div>
-        <div className='flex flex-col gap-2'>
-          {response.insights.map((insight, index) => (
+  try {
+    const pastelColor = getPastelColorFromEmoji(response.mood_emoji || '');
+
+    return (
+      <div className='pt-24 px-8 pb-12 max-w-md w-full mx-auto text-base text-center flex flex-col gap-8 justify-between h-full min-h-svh'>
+        <div className='flex flex-col gap-10'>
+          <div className='flex flex-col gap-'>
             <div
-              key={index}
-              className={cn(
-                'flex items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
-                insight.type === 'positive'
-                  ? 'bg-green-100 border-green-200'
-                  : 'bg-red-100 border-red-200',
-                'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
-              )}
+              className='mb-3 flex text-5xl aspect-square rounded-full size-20 mx-auto items-center justify-center'
+              style={{ backgroundColor: pastelColor }}
             >
+              {response.mood_emoji || '🤷‍♂️'}
+            </div>
+            <h5 className='mt-2 text-2xl font-medium text-neutral-800'>
+              {response.title || 'No pudimos generar un título'}
+            </h5>
+            <p className='mt-2 text-base tracking-tight text-neutral-400 font-normal'>
+              {response.description || 'Prueba con audios más largos y claros'}
+            </p>
+          </div>
+          <div className='flex flex-col gap-2'>
+            {(response.insights || []).map((insight, index) => (
               <div
+                key={index}
                 className={cn(
-                  'size-10 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square',
+                  'flex items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
                   insight.type === 'positive'
-                    ? 'bg-green-200 text-green-600'
-                    : 'bg-red-200 text-red-600'
+                    ? 'bg-green-100 border-green-200'
+                    : 'bg-red-100 border-red-200',
+                  'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
                 )}
               >
-                {insight.type === 'positive' ? <ThumbsUp /> : <ThumbsDown />}
+                <div
+                  className={cn(
+                    'size-10 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square',
+                    insight.type === 'positive'
+                      ? 'bg-green-200 text-green-600'
+                      : 'bg-red-200 text-red-600'
+                  )}
+                >
+                  {insight.type === 'positive' ? <ThumbsUp /> : <ThumbsDown />}
+                </div>
+                <span className='text-neutral-800'>{insight.text || ''}</span>
               </div>
-              <span className='text-neutral-800'>{insight.text}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+        <Button
+          onClick={() => setLocation('/journal')}
+          variant='primary'
+          className='mt-3'
+        >
+          Ver resultados
+        </Button>
       </div>
-      <Button
-        onClick={() => setLocation('/journal')}
-        variant='primary'
-        className='mt-3'
-      >
-        Ver resultados
-      </Button>
-    </div>
-  );
+    );
+  } catch (error) {
+    console.error('Error rendering FastResponseUI:', error);
+    return (
+      <div className='p-4 text-center text-red-600'>
+        Ha ocurrido un error al mostrar la respuesta
+      </div>
+    );
+  }
 };

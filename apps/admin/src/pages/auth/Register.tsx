@@ -48,8 +48,8 @@ export default function Register({ setView }: Props) {
       const user = await registerWithEmailAndPassword(email, password);
 
       if (user) {
+        createUserProfile({ ...user });
         setLocation('/onboarding');
-        await createUserProfile({ ...user });
       }
     } catch (error) {
       setError('Este usuario ya existe, por favor trata con otro email');
@@ -58,9 +58,11 @@ export default function Register({ setView }: Props) {
     }
   };
 
-
   return (
-    <form onSubmit={handleRegister} className='flex flex-col text-neutral-800 min-h-svh w-full *:w-full *:*:w-full p-12 px-8 items-start justify-between'>
+    <form
+      onSubmit={handleRegister}
+      className='flex flex-col text-neutral-800 min-h-svh w-full *:w-full *:*:w-full p-12 px-8 items-start justify-between'
+    >
       <div className='flex flex-col items-center gap-12'>
         <BlurFade>
           <div className='flex flex-col items-center gap-5'>
@@ -127,7 +129,7 @@ export default function Register({ setView }: Props) {
       </div>
 
       <div className='mt-8 flex flex-col gap-4 max-w-96 mx-auto'>
-        <Button type="submit" disabled={loading} variant='primary'>
+        <Button type='submit' disabled={loading} variant='primary'>
           {loading ? 'Registrando...' : 'Registrarse'}
         </Button>
         <p className='text-center text-sm text-gray-400 h-10 flex gap-1.5 justify-center items-center'>

@@ -14,12 +14,14 @@ const useAuthState = () => {
 
   useEffect(() => {
     const fetchProfile = async (userId: string, retries = 3) => {
+      let userData = null;
+      const actualRoute = location;
       try {
-        const actualRoute = location;
         console.log('actualRoute', actualRoute);
-        const userData = await fetchUserProfile(userId);
+        userData = await fetchUserProfile(userId);
         setUserProfile(userData);
 
+        // Verificar si el usuario necesita ser redirigido a onboarding
         if (
           userData &&
           (!userData.name || !userData.age) &&
@@ -32,11 +34,12 @@ const useAuthState = () => {
           console.warn(
             `Retrying fetch user profile... Attempts left: ${retries}`
           );
-          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait for 1 second
+          await new Promise((resolve) => setTimeout(resolve, 1000));
           fetchProfile(userId, retries - 1);
         } else {
           console.error('Error fetching user profile:', error);
           setLoading(false);
+          setLocation('/onboarding');
         }
       }
     };

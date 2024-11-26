@@ -2,7 +2,15 @@ import { useEffect, useState } from 'react';
 import useUserStore from '@/store/useUserStore';
 import { signOut } from '@common/api/auth';
 import { Button } from '@common/components/ui/button';
-import { Book, LogOut, Mic, Pen, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
+import {
+  Book,
+  LogOut,
+  Mic,
+  Pen,
+  Star,
+  ThumbsDown,
+  ThumbsUp,
+} from 'lucide-react';
 import { useLocation } from 'wouter';
 import {
   fetchUserProfile,
@@ -35,16 +43,6 @@ const conversationPrompts = [
   },
 ];
 
-const daysOfWeek = [
-  { day: 'L', emoji: '🥱', color: 'bg-[#C9C9FF]' },
-  { day: 'M', emoji: '😭', color: 'bg-[#AADEFF]' },
-  { day: 'W', emoji: '😡', color: 'bg-[#FFCCBB]' },
-  { day: 'J', emoji: '😁', color: 'bg-[#FFFAAB]' },
-  { day: 'V', emoji: '', color: 'bg-[#D4D4D4]' },
-  { day: 'S', emoji: '', color: 'bg-[#D4D4D4]' },
-  { day: 'D', emoji: '', color: 'bg-[#D4D4D4]' },
-];
-
 const HomePage = () => {
   const { userProfile } = useUserStore();
   const [mood, setMood] = useState('');
@@ -74,7 +72,6 @@ const HomePage = () => {
         setRecommendations(recommendationsResult);
         setGoodHabits(goodHabitsResult.goodhabits);
         setDobetterHabits(dobetterResult);
-        console.log('reccomendatios', recommendations);
       } catch (error) {
         console.error('Error loading profile data:', error);
       } finally {
@@ -84,60 +81,6 @@ const HomePage = () => {
 
     loadProfileData();
   }, [userProfile?.id]);
-
-  if (loading) {
-    return (
-      <div className='bg-[linear-gradient(90deg,_#FFFBFB_0%,_#FCE4CB_25%,_#FCDDFD_50%,_#D9E0FF_75%,_#F2F4FF_100%)]'>
-        <div className='flex gap-2 items-center p-3 justify-end'>
-          <Skeleton className='size-8 rounded-lg shrink-0' />
-        </div>
-
-        <div className='flex flex-col items-center gap-4 relative mt-32 h-40'>
-          <Ripple
-            numCircles={3}
-            mainCircleSize={128}
-            mainCircleOpacity={0.9}
-            color={'bg-white/25'}
-            className={'animate-ripple'}
-          />
-        </div>
-        <Skeleton className='h-12 w-64 mx-auto mb-4' />
-        <Skeleton className='h-12 w-80 mx-auto mb-2' />
-        <Skeleton className='h-12 w-80 mx-auto mb-2' />
-        <Skeleton className='h-12 w-80 mx-auto mb-5' />
-        <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] p-6'>
-          <Skeleton className='h-6 w-24' />
-
-          <div className='space-y-4'>
-            <Skeleton className='h-6 w-32' />
-            <div className='space-y-2'>
-              {Array.from({ length: 2 }).map((_, index) => (
-                <Skeleton key={index} className='h-14 w-full rounded-lg' />
-              ))}
-            </div>
-          </div>
-
-          <div className='space-y-4'>
-            <Skeleton className='h-6 w-32' />
-            <div className='space-y-2'>
-              {Array.from({ length: 2 }).map((_, index) => (
-                <Skeleton key={index} className='h-14 w-full rounded-lg' />
-              ))}
-            </div>
-          </div>
-
-          <div className='space-y-4'>
-            <Skeleton className='h-6 w-32' />
-            <div className='space-y-2'>
-              {Array.from({ length: 2 }).map((_, index) => (
-                <Skeleton key={index} className='h-14 w-full rounded-lg' />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className='bg-[linear-gradient(180deg,#Fce6cf_0%,_#fbcffc_10%,_#CCd5ff_20%)]'>
@@ -153,26 +96,11 @@ const HomePage = () => {
         </Button>
       </div>
 
-      {/*   <div className='flex px-2 py-3'>
-        <div className='flex gap-2 justify-between rounded-2xl w-full bg-white px-4 py-3'>
-          {daysOfWeek.map(({ day, emoji, color }, index) => (
-            <div
-              key={index}
-              className='w-32 [&:nth-last-child(-n+3)]:text-neutral-300 flex flex-col items-center gap-1.5'
-            >
-              <span className='font-bold text-[10px] leading-none'>{day}</span>
-              <div
-                className={`flex flex-col items-center justify-center size-8 rounded-full ${color}`}
-              >
-                <span className='leading-none'>{emoji}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div> */}
-
-      <div className="min-h-[65svh] justify-center h-full flex flex-col items-center">
-        <div onClick={() => setLocation("/chat")} className='pt-16 flex flex-col items-center gap-4 relative mt-16 h-40'>
+      <div className='min-h-[65svh] justify-center h-full flex flex-col items-center'>
+        <div
+          onClick={() => setLocation('/chat')}
+          className='pt-16 flex flex-col items-center gap-4 relative mt-16 h-40'
+        >
           <Ripple
             numCircles={3}
             mainCircleSize={128}
@@ -211,104 +139,135 @@ const HomePage = () => {
 
       <div className='bg-white w-full h-full flex flex-col gap-6 rounded-t-[24px] pt-8 pb-16 p-6'>
         <h2 className='text-lg font-semibold'>Sobre ti</h2>
-        <div className='space-y-4'>
-          <h3 className='text-lg font-medium text-neutral-500'>
-            Recomendaciones
-          </h3>
-          <div className="space-y-2 pb-8">
-            {recommendations?.length > 0 ? (
-              recommendations.map((recommendation, index) => {
-                const RandomIcon = icons[Math.floor(Math.random() * icons.length)];
-                return (
-                  <div
-                    key={index}
-                    className={cn(
-                      'flex bg-white text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
-                      'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
-                    )}
-                  >
+        {loading ? (
+          <>
+            <div className='space-y-4'>
+              <Skeleton className='h-6 w-32' />
+              <div className='space-y-2'>
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <Skeleton key={index} className='h-14 w-full rounded-lg' />
+                ))}
+              </div>
+            </div>
+
+            <div className='space-y-4'>
+              <Skeleton className='h-6 w-32' />
+              <div className='space-y-2'>
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <Skeleton key={index} className='h-14 w-full rounded-lg' />
+                ))}
+              </div>
+            </div>
+
+            <div className='space-y-4'>
+              <Skeleton className='h-6 w-32' />
+              <div className='space-y-2'>
+                {Array.from({ length: 2 }).map((_, index) => (
+                  <Skeleton key={index} className='h-14 w-full rounded-lg' />
+                ))}
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className='space-y-4'>
+              <h3 className='text-lg font-medium text-neutral-500'>
+                Recomendaciones
+              </h3>
+              <div className='space-y-2 pb-8'>
+                {recommendations?.length > 0 ? (
+                  recommendations.map((recommendation, index) => {
+                    const RandomIcon =
+                      icons[Math.floor(Math.random() * icons.length)];
+                    return (
+                      <div
+                        key={index}
+                        className={cn(
+                          'flex bg-white text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
+                          'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            'size-8 bg-neutral-100 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
+                          )}
+                        >
+                          <RandomIcon />
+                        </div>
+                        <span className='text-neutral-800'>
+                          {recommendation.mensaje.charAt(0).toUpperCase() +
+                            recommendation.mensaje.slice(1)}
+                        </span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <p className='text-neutral-500'>No tienes recomendaciones</p>
+                )}
+              </div>
+            </div>
+
+            <div className='space-y-4'>
+              <h3 className='text-lg font-medium text-neutral-500'>
+                Buenos hábitos
+              </h3>
+              <div className='space-y-2 pb-8'>
+                {goodHabits?.length > 0 ? (
+                  goodHabits?.map((habit, index) => (
                     <div
+                      key={index}
                       className={cn(
-                        'size-8 bg-neutral-100 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
+                        'flex bg-green-100 border-green-200 text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
+                        'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
                       )}
                     >
-                      <RandomIcon />
+                      <div
+                        className={cn(
+                          'size-8 bg-green-200 text-green-600 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
+                        )}
+                      >
+                        <ThumbsUp />
+                      </div>
+                      <span className='text-neutral-800'>{habit.mensaje}</span>
                     </div>
-                    <span className="text-neutral-800">
-                      {recommendation.mensaje.charAt(0).toUpperCase() + recommendation.mensaje.slice(1)}
-                    </span>
-                  </div>
-                );
-              })
-            ) : (
-              <p className="text-neutral-500">No tienes recomendaciones</p>
-            )}
-          </div>
-        </div>
+                  ))
+                ) : (
+                  <p className='text-neutral-500'>No tienes buenos hábitos</p>
+                )}
+              </div>
+            </div>
 
-        <div className='space-y-4'>
-          <h3 className='text-lg font-medium text-neutral-500'>
-            Buenos hábitos
-          </h3>
-          <div className='space-y-2 pb-8'>
-            {goodHabits?.length > 0 ? (
-              goodHabits?.map((habit, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    'flex bg-green-100 border-green-200 text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
-                    'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'size-8 bg-green-200 text-green-600 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
-                    )}
-                  >
-                    <ThumbsUp />
-                  </div>
-                  <span className="text-neutral-800">
-                    {habit.mensaje}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className='text-neutral-500'>No tienes buenos hábitos</p>
-            )}
-          </div>
-        </div>
-
-        <div className='space-y-4 pb-20'>
-          <h3 className='text-lg font-medium text-neutral-500'>
-            Hábitos por mejorar
-          </h3>
-          <div className='space-y-2 pb-8'>
-            {dobetterHabits?.length > 0 ? (
-              dobetterHabits?.map((habit, index) => (
-                <div
-                  key={index}
-                  className={cn(
-                    'flex bg-red-100 border-red-200 text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
-                    'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
-                  )}
-                >
-                  <div
-                    className={cn(
-                      'size-8 bg-red-200 text-red-600 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
-                    )}
-                  >
-                    <ThumbsDown />
-                  </div>
-                  <span className="text-neutral-800">
-                    {habit.mensaje}
-                  </span>
-                </div>
-              ))
-            ) : (
-              <p className='text-neutral-500'>No tienes áreas de mejora</p>
-            )}
-          </div>
-        </div>
+            <div className='space-y-4 pb-20'>
+              <h3 className='text-lg font-medium text-neutral-500'>
+                Hábitos por mejorar
+              </h3>
+              <div className='space-y-2 pb-8'>
+                {dobetterHabits?.length > 0 ? (
+                  dobetterHabits?.map((habit, index) => (
+                    <div
+                      key={index}
+                      className={cn(
+                        'flex bg-red-100 border-red-200 text-neutral-800 items-center text-sm text-left gap-3 font-medium p-2 pr-3 rounded-lg border',
+                        'shadow-[4px_4px_24px_0px_rgba(82,82,82,0.04),_4px_4px_64px_0px_rgba(82,82,82,0.08)]'
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'size-8 bg-red-200 text-red-600 flex [&_svg]:size-5 items-center justify-center rounded-md shrink-0 aspect-square'
+                        )}
+                      >
+                        <ThumbsDown />
+                      </div>
+                      <span className='text-neutral-800'>{habit.mensaje}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className='text-neutral-500'>No tienes áreas de mejora</p>
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
