@@ -118,7 +118,7 @@ export default function Onboarding() {
   const renderStepContent = () => {
     switch (currentStep) {
       case 'welcome':
-        return <div className="h-full my-auto"></div>;
+        return <div className='h-full my-auto'></div>;
       case 'name':
         return (
           <BlurFade delay={0.5} inView>
@@ -178,10 +178,15 @@ export default function Onboarding() {
               Empezaremos creando tu primera entrada al diario.
             </p>
             <p className='text-base tracking-tight text-neutral-400 font-normal'>
-              No te sobrepienses,{' '}
+              No sobrepienses,{' '}
               <span className='underline text-neutral-800'>
                 cualquier cosa sirve.
               </span>
+            </p>
+            <p className='text-base tracking-tight text-neutral-400 font-normal'>
+              Ej: "Hoy me siento un poco estresado por el trabajo, pero me
+              alegra haber podido almorzar con mi familia. Me ayudó a
+              despejarme..."
             </p>
           </div>
         );
@@ -199,15 +204,17 @@ export default function Onboarding() {
         currentStep === 'ready' && 'pb-32'
       )}
     >
-      {(currentStep !== 'welcome' && currentStep !== 'name' && currentStep !== 'age') && (
-        <Button
-          onClick={() => handleBack()}
-          size='icon'
-          variant='ghost'
-          className="absolute [&_svg]:size-6 mt-3 mr-auto p-4 text-neutral-400"
-        >
-          <ArrowLeft />
-        </Button>
+      {currentStep !== 'welcome' &&
+        currentStep !== 'name' &&
+        currentStep !== 'age' && (
+          <Button
+            onClick={() => handleBack()}
+            size='icon'
+            variant='ghost'
+            className='absolute [&_svg]:size-6 mt-3 mr-auto p-4 text-neutral-400'
+          >
+            <ArrowLeft />
+          </Button>
         )}
       <div className='flex flex-col flex-grow justify-center items-center w-full max-w-md mx-auto text-center gap-6'>
         <BlurFade delay={0.25}>
