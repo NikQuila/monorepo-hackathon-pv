@@ -27,7 +27,7 @@ const useAuthState = () => {
           (!userData.name || !userData.age) &&
           actualRoute !== '/onboarding'
         ) {
-          setLocation('/');
+          setLocation('/onboarding');
         }
       } catch (error) {
         if (retries > 0) {
