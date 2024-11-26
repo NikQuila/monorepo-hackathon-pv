@@ -399,7 +399,7 @@ const FastResponseUI = ({ response }: { response: FastResponse }) => {
     const pastelColor = getPastelColorFromEmoji(response.mood_emoji || '');
 
     return (
-      <div className='pt-10 px-8 pb-12 max-w-md w-full mx-auto text-base text-center flex flex-col gap-8 justify-between h-full '>
+      <div className='px-8 pb-12 max-w-md w-full mx-auto text-base text-center flex flex-col gap-8 justify-between h-full '>
         <div className='flex flex-col gap-10'>
           <div className='flex flex-col gap-'>
             <div

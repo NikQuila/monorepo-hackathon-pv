@@ -98,14 +98,14 @@ export default function HelpStepper() {
           Tips
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] h-svh">
+      <DialogContent className="sm:max-w-[425px] h-svh border-0 shadow-none">
         <DialogHeader>
           <DialogTitle>
             {steps[currentStep].icon}
             {steps[currentStep].title}
           </DialogTitle>
           <DialogDescription>
-            <p className='text-base tracking-tight text-neutral-400 font-normal'>
+            <p className='tracking-tight text-neutral-600 font-normal'>
               {steps[currentStep].description}
             </p>
           </DialogDescription>
@@ -115,7 +115,7 @@ export default function HelpStepper() {
           size='icon'
           variant='ghost'
           className={cn(
-            "fixed [&_svg]:size-6 top-2 left-2 p-4 text-neutral-400",
+            "fixed [&_svg]:size-6 top-2 left-2 p-4 text-neutral-600",
             currentStep === 0 && "hidden"
           )}
         >
@@ -154,7 +154,7 @@ export default function HelpStepper() {
               <Button variant="primary" type="submit">Cerrar</Button>
             </DialogClose>
           ) : (
-            <Button variant="primary" onClick={nextStep}>Next</Button>
+            <Button variant="primary" onClick={nextStep}>Siguiente</Button>
           )}
         </DialogFooter>
       </DialogContent>
